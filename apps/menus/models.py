@@ -1,6 +1,6 @@
 from django.db import models
 
-from accounts.models import Patient
+from apps.accounts.models import Patient
 
 
 class Menu(models.Model):
