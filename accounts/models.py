@@ -15,7 +15,7 @@ class Patient(models.Model):
     insurance_policy_number = models.CharField(max_length=100)
     birth_date = models.DateField(null=False)
     link_token = models.CharField(max_length=100, null=False)
-    sex = forms.ChoiceField(choices=['male', 'female'], null=False)
+    sex = forms.ChoiceField(choices=['male', 'female'])
     activity_level = models.CharField(max_length=255)
     weight = models.FloatField()
     waist = models.FloatField()
