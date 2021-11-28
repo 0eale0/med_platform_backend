@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import *
+
+from menus.models import Menu, PatientMenu, Day, MenuDay, Ingredient, Dish, DishIngredient, DayDish
 
 admin.site.register(Menu)
 admin.site.register(PatientMenu)
