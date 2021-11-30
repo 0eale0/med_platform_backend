@@ -10,9 +10,14 @@ class User(AbstractUser):
     middle_name = models.CharField(max_length=60)
 
 
-class Patient(models.Model):
+class Doctor(models.Model):
+    phone_number = models.CharField(max_length=100)
+    post = models.CharField(max_length=100)
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
+
+class Patient(models.Model):
     phone_number = models.CharField(max_length=100)
     medical_card_number = models.CharField(max_length=255, **NULLABLE)
     insurance_policy_number = models.CharField(max_length=100, **NULLABLE)
@@ -29,14 +34,5 @@ class Patient(models.Model):
     city = models.CharField(max_length=60)
     address = models.CharField(max_length=60)
 
-
-class Doctor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-
-    phone_number = models.CharField(max_length=100)
-    post = models.CharField(max_length=100)
-
-
-class DoctorPatient(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
