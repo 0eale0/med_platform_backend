@@ -14,7 +14,7 @@ class Doctor(models.Model):
     phone_number = models.CharField(max_length=100)
     post = models.CharField(max_length=100)
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Patient(models.Model):
@@ -34,5 +34,5 @@ class Patient(models.Model):
     city = models.CharField(max_length=60)
     address = models.CharField(max_length=60)
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, **NULLABLE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
