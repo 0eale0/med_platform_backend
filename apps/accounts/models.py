@@ -2,6 +2,7 @@ from django.db import models
 from django import forms
 from django.contrib.auth.models import AbstractUser
 
+from apps.menus.models import Menu
 
 NULLABLE = {'null': True, 'blank': True}
 
@@ -36,3 +37,4 @@ class Patient(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, **NULLABLE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
