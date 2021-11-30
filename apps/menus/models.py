@@ -1,10 +1,8 @@
 from django.db import models
 
-from apps.accounts.models import Patient
-
 
 class Menu(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    pass
 
 
 class Day(models.Model):
