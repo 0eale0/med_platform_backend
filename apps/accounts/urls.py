@@ -9,5 +9,5 @@ router.register('patient', views.PatientView)
 
 
 urlpatterns = [
-    path('api/account/', include(router.urls))
+    path(r'api/', include(router.urls))
 ]
