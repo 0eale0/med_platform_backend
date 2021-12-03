@@ -1,6 +1,5 @@
 from django.urls import path, include
 from rest_framework import routers
-from sqlalchemy.testing.suite.test_reflection import users
 
 from apps.accounts import views
 
