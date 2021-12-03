@@ -5,13 +5,10 @@ from rest_framework import serializers
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Menu
-        fields = (
-        )
+        fields = '__all__'
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Ingredient
-        fields = (
-            'name', 'default_weight', 'proteins', 'fats', 'carbohydrates', 'calories', 'dish'
-        )
+        fields = '__all__'
