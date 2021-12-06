@@ -1,13 +1,6 @@
-from django.urls import path, include
 from rest_framework import routers
+from apps.accounts.viewsets import PatientViewForDoctor
 
-from apps.accounts import views
+router = routers.SimpleRouter()
 
-router = routers.DefaultRouter()
-router.register('users', views.UserView)
-router.register('patient', views.PatientView)
-
-
-urlpatterns = [
-    path(r'api/', include(router.urls))
-]
+router.register('api/accounts/patient/?', PatientViewForDoctor)
