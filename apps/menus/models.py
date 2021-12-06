@@ -21,7 +21,7 @@ class Dish(models.Model):
     calories = models.FloatField()
     recipe = models.TextField()
 
-    day = models.ManyToManyField(Day, through='DayDish')
+    day = models.ManyToManyField(Day, through="DayDish")
 
 
 class DayDish(models.Model):
@@ -40,7 +40,7 @@ class Ingredient(models.Model):
     carbohydrates = models.FloatField()
     calories = models.FloatField()
 
-    dish = models.ManyToManyField(Dish, through='DishIngredient')
+    dish = models.ManyToManyField(Dish, through="DishIngredient")
 
 
 class DishIngredient(models.Model):
