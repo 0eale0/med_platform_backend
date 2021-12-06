@@ -12,14 +12,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Loading environment variables
-load_dotenv(dotenv_path=BASE_DIR / '.env')
+load_dotenv(find_dotenv())
 
 
 # Quick-start development settings - unsuitable for production
@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'med_communication_platform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DB_NAME', 'dbname'),
+        'USER': os.environ.get('DB_USER', 'dbuser'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'dbpass'),
+        'HOST': os.environ.get('DB_HOST', 'dbhost'),
         'PORT': '5432',
     }
 }
