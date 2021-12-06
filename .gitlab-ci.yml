@@ -1,0 +1,15 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  script:
+    # Скрипт сборки указан внутри системы и
+    # никаких дополнительных настроек не требуется
+    - echo
+  tags:
+    - a.uenv.ru
+    - unienv_deploy
+  environment:
+    name: UniEnv
+    url: http://a.uenv.ru
