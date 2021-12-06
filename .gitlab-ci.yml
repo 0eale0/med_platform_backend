@@ -1,5 +1,14 @@
+image: python:3.8
+
 stages:
+  - lint
   - deploy
+
+lint:
+  stage: lint
+  script:
+    - pip install black
+    - black . --check --diff
 
 deploy:
   stage: deploy
