@@ -1,12 +1,14 @@
 from rest_framework import routers
-from django.urls import path, include
 
-from apps.menus import views
+from apps.menus.viewsets import MenuViewSet, IngredientViewSet, DayViewSet, DishViewSet, DayDishViewSet, \
+    DishIngredientViewSet
 
-router = routers.DefaultRouter()
-router.register('menus', views.MenuViewSet)
-router.register('ingredients', views.IngredientViewSet)
+router = routers.SimpleRouter()
 
-urlpatterns = [
-    path(r'api/', include(router.urls))
-]
+router.register('api/menus/menus/?', MenuViewSet)
+router.register('api/menus/ingredients/?', IngredientViewSet)
+router.register('api/menus/day/?', DayViewSet)
+router.register('api/menus/dish/?', DishViewSet)
+router.register('api/menus/day_dish/?', DayDishViewSet)
+router.register('api/menus/dish_ingredients/?', DishIngredientViewSet)
+
