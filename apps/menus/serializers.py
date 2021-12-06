@@ -6,19 +6,19 @@ from apps.menus.models import Menu, Ingredient, Dish, Day, DayDish, DishIngredie
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
-        fields = '__all__'
+        fields = "__all__"
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DaySerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class DaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Day
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DayDishSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class DayDishSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DayDish
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DishIngredientSerializer(serializers.ModelSerializer):
@@ -44,4 +44,4 @@ class DishIngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DishIngredient
-        fields = '__all__'
+        fields = "__all__"

@@ -2,8 +2,14 @@ from django.shortcuts import render
 from rest_framework import viewsets
 
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
-from apps.menus.serializers import MenuSerializer, IngredientSerializer, DaySerializer, DishSerializer, \
-    DayDishSerializer, DishIngredientSerializer
+from apps.menus.serializers import (
+    MenuSerializer,
+    IngredientSerializer,
+    DaySerializer,
+    DishSerializer,
+    DayDishSerializer,
+    DishIngredientSerializer,
+)
 
 
 class MenuViewSet(viewsets.ModelViewSet):
@@ -34,4 +40,3 @@ class DayDishViewSet(viewsets.ModelViewSet):
 class DishIngredientViewSet(viewsets.ModelViewSet):
     serializer_class = DishIngredientSerializer
     queryset = DishIngredient.objects.all()
-
