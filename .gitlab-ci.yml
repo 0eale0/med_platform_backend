@@ -22,3 +22,5 @@ deploy:
   environment:
     name: UniEnv
     url: http://a.uenv.ru
+  only:
+    - develop
