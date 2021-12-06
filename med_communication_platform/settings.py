@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     #
     'apps.accounts',
     'apps.menus',
-    #
-    'rest_framework'
+    'rest_framework',
 
 ]
 

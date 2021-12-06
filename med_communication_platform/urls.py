@@ -16,14 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from apps.menus.urls import router as menus_router
-
-
-router = routers.DefaultRouter()
-router.registry.extend(menus_router.registry)
+from apps.accounts.urls import router as accounts_router
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'api/', include(router.urls))
 ]
+
+urlpatterns += accounts_router.urls
