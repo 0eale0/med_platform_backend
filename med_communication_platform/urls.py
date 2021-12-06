@@ -17,11 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from apps.accounts.urls import router as accounts_router
+from apps.menus.urls import router as menus_router
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'api/', include(router.urls))
 ]
 
 urlpatterns += accounts_router.urls
+urlpatterns += menus_router.urls
