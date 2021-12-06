@@ -1,0 +1,26 @@
+image: python:3.8.12
+
+stages:
+  - lint
+  - deploy
+
+lint:
+  stage: lint
+  script:
+    - pip install black
+    - black . --check --diff
+
+deploy:
+  stage: deploy
+  script:
+    # Скрипт сборки указан внутри системы и
+    # никаких дополнительных настроек не требуется
+    - echo
+  tags:
+    - a.uenv.ru
+    - unienv_deploy
+  environment:
+    name: UniEnv
+    url: http://a.uenv.ru
+  only:
+    - develop

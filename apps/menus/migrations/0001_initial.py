@@ -8,81 +8,152 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Day',
+            name="Day",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('done', models.BooleanField(blank=True, default=False)),
-                ('number', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("done", models.BooleanField(blank=True, default=False)),
+                ("number", models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='DayDish',
+            name="DayDish",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('dish_amount', models.FloatField()),
-                ('time', models.TimeField()),
-                ('day', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='menus.day')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("dish_amount", models.FloatField()),
+                ("time", models.TimeField()),
+                (
+                    "day",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="menus.day"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Dish',
+            name="Dish",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=60)),
-                ('default_weight', models.FloatField()),
-                ('proteins', models.FloatField()),
-                ('fats', models.FloatField()),
-                ('carbohydrates', models.FloatField()),
-                ('calories', models.FloatField()),
-                ('recipe', models.TextField()),
-                ('day', models.ManyToManyField(through='menus.DayDish', to='menus.Day')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=60)),
+                ("default_weight", models.FloatField()),
+                ("proteins", models.FloatField()),
+                ("fats", models.FloatField()),
+                ("carbohydrates", models.FloatField()),
+                ("calories", models.FloatField()),
+                ("recipe", models.TextField()),
+                (
+                    "day",
+                    models.ManyToManyField(through="menus.DayDish", to="menus.Day"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='DishIngredient',
+            name="DishIngredient",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ingredient_amount', models.FloatField()),
-                ('dish', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='menus.dish')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ingredient_amount", models.FloatField()),
+                (
+                    "dish",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="menus.dish"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Menu',
+            name="Menu",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Ingredient',
+            name="Ingredient",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=60)),
-                ('default_weight', models.FloatField()),
-                ('proteins', models.FloatField()),
-                ('fats', models.FloatField()),
-                ('carbohydrates', models.FloatField()),
-                ('calories', models.FloatField()),
-                ('dish', models.ManyToManyField(through='menus.DishIngredient', to='menus.Dish')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=60)),
+                ("default_weight", models.FloatField()),
+                ("proteins", models.FloatField()),
+                ("fats", models.FloatField()),
+                ("carbohydrates", models.FloatField()),
+                ("calories", models.FloatField()),
+                (
+                    "dish",
+                    models.ManyToManyField(
+                        through="menus.DishIngredient", to="menus.Dish"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='dishingredient',
-            name='ingredient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='menus.ingredient'),
+            model_name="dishingredient",
+            name="ingredient",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="menus.ingredient"
+            ),
         ),
         migrations.AddField(
-            model_name='daydish',
-            name='dish',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='menus.dish'),
+            model_name="daydish",
+            name="dish",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="menus.dish"
+            ),
         ),
         migrations.AddField(
-            model_name='day',
-            name='menu',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='menus.menu'),
+            model_name="day",
+            name="menu",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="menus.menu"
+            ),
         ),
     ]

@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0003_alter_patient_link_token'),
+        ("accounts", "0003_alter_patient_link_token"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='patient',
-            name='link_token',
-            field=models.CharField(default='0', max_length=100),
+            model_name="patient",
+            name="link_token",
+            field=models.CharField(default="0", max_length=100),
             preserve_default=False,
         ),
     ]

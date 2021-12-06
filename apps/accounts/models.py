@@ -5,13 +5,13 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.menus.models import Menu
 
-NULLABLE = {'null': True, 'blank': True}
+NULLABLE = {"null": True, "blank": True}
 
 
 class User(AbstractUser):
     middle_name = models.CharField(max_length=150)
-    first_name = models.CharField(_('first name'), max_length=150, blank=False)
-    last_name = models.CharField(_('last name'), max_length=150, blank=False)
+    first_name = models.CharField(_("first name"), max_length=150, blank=False)
+    last_name = models.CharField(_("last name"), max_length=150, blank=False)
 
 
 class Doctor(models.Model):
@@ -22,12 +22,12 @@ class Doctor(models.Model):
 
 
 class Patient(models.Model):
-    phone_number = models.CharField(max_length=100)#unique=True
+    phone_number = models.CharField(max_length=100)  # unique=True
     medical_card_number = models.CharField(max_length=255, **NULLABLE)
     insurance_policy_number = models.CharField(max_length=100, **NULLABLE)
     birth_date = models.DateField()
     link_token = models.CharField(max_length=100)
-    sex = forms.ChoiceField(choices=['male', 'female'])
+    sex = forms.ChoiceField(choices=["male", "female"])
     activity_level = models.CharField(max_length=255, **NULLABLE)
     weight = models.FloatField(**NULLABLE)
     waist = models.FloatField(**NULLABLE)

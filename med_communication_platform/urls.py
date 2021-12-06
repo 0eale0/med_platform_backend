@@ -21,7 +21,7 @@ from apps.menus.urls import router as menus_router
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 ]
 
 urlpatterns += accounts_router.urls

@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'middle_name']
+        fields = ["id", "first_name", "last_name", "middle_name"]
 
 
 class PatientForDoctorSerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class PatientForDoctorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Patient
-        exclude = ['link_token']
+        exclude = ["link_token"]
 
     @staticmethod
     def get_join_link(obj):
