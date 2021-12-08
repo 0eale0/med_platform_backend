@@ -29,11 +29,11 @@ class DayViewSet(viewsets.ModelViewSet):
     queryset = Day.objects.all()
 
     def create(self, request, *args, **kwargs):
-        Day.objects.create(**request.data["day"])
+        day = Day.objects.create(**request.data["day"])
         dish_ingredients = request.data["day_dishes"]
 
         for day_dish in dish_ingredients:
-            class_day = Day.objects.filter(id=day_dish["id_dish"]).first()
+            class_day = Day.objects.filter(id=day.id).first()
             class_dish = Ingredient.objects.filter(id=day_dish["id_dish"]).first()
             DishIngredient.objects.create(
                 ingredient_amount=day_dish["ingredient_amount"],
@@ -64,11 +64,11 @@ class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
 
     def create(self, request, *args, **kwargs):
-        Dish.objects.create(**request.data["dish"])
+        dish = Dish.objects.create(**request.data["dish"])
         dish_ingredients = request.data["dish_ingredients"]
 
         for dish_ingredient in dish_ingredients:
-            class_dish = Dish.objects.filter(id=dish_ingredient["id_dish"]).first()
+            class_dish = Dish.objects.filter(id=dish.id).first()
             class_ingredient = Ingredient.objects.filter(
                 id=dish_ingredient["id_ingredient"]
             ).first()
