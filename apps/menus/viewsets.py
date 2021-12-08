@@ -29,17 +29,25 @@ class DayViewSet(viewsets.ModelViewSet):
     queryset = Day.objects.all()
 
     def create(self, request, *args, **kwargs):
-        day = request.data["day"]
-        day = Dish(**day)
-        day_dishes = request.data["day_dishes"]
-        classes = []
+        Day.objects.create(**request.data["day"])
+        dish_ingredients = request.data["day_dishes"]
 
-        for day_dish in day_dishes:
-            classes.append(DayDish(**day_dish, dish_id=day.id))
+        for day_dish in dish_ingredients:
+            class_day = Day.objects.filter(id=day_dish["id_dish"]).first()
+            class_dish = Ingredient.objects.filter(id=day_dish["id_dish"]).first()
+            DishIngredient.objects.create(
+                ingredient_amount=day_dish["ingredient_amount"],
+                day=class_day,
+                dish=class_dish,
+            )
 
-        request.data = request.data["day"]
-        response = super().create(request, *args, **kwargs)
-        return response
+        serializer = self.get_serializer(data=request.data["day"])
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def retrieve(self, request, *args, **kwargs):
         day = self.get_object()
@@ -56,16 +64,27 @@ class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
 
     def create(self, request, *args, **kwargs):
-        dish = request.data["dish"]
-        dish = Dish(**dish)
+        Dish.objects.create(**request.data["dish"])
         dish_ingredients = request.data["dish_ingredients"]
 
         for dish_ingredient in dish_ingredients:
-            DishIngredient(**dish_ingredient, dish_id=dish.id)
+            class_dish = Dish.objects.filter(id=dish_ingredient["id_dish"]).first()
+            class_ingredient = Ingredient.objects.filter(
+                id=dish_ingredient["id_ingredient"]
+            ).first()
+            DishIngredient.objects.create(
+                ingredient_amount=dish_ingredient["ingredient_amount"],
+                dish=class_dish,
+                ingredient=class_ingredient,
+            )
 
-        request.data = request.data["dish"]
-        response = super().create(request, *args, **kwargs)
-        return response
+        serializer = self.get_serializer(data=request.data["dish"])
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def retrieve(self, request, *args, **kwargs):
         dish = self.get_object()
