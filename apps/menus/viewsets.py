@@ -29,22 +29,25 @@ class DayViewSet(viewsets.ModelViewSet):
     queryset = Day.objects.all()
 
     def create(self, request, *args, **kwargs):
-        day = request.data['day']
+        day = request.data["day"]
         day = Dish(**day)
-        day_dishes = request.data['day_dishes']
+        day_dishes = request.data["day_dishes"]
         classes = []
 
         for day_dish in day_dishes:
             classes.append(DayDish(**day_dish, dish_id=day.id))
 
-        request.data = request.data['day']
+        request.data = request.data["day"]
         response = super().create(request, *args, **kwargs)
         return response
-    
+
     def retrieve(self, request, *args, **kwargs):
         day = self.get_object()
         if not request.user.post:
-            return Response({'detail': 'У вас недостаточно прав для выполнения данного действия.'}, status=401)
+            return Response(
+                {"detail": "У вас недостаточно прав для выполнения данного действия."},
+                status=401,
+            )
         return Response(self.get_serializer(day).data)
 
 
@@ -53,21 +56,24 @@ class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
 
     def create(self, request, *args, **kwargs):
-        dish = request.data['dish']
+        dish = request.data["dish"]
         dish = Dish(**dish)
-        dish_ingredients = request.data['dish_ingredients']
+        dish_ingredients = request.data["dish_ingredients"]
 
         for dish_ingredient in dish_ingredients:
             DishIngredient(**dish_ingredient, dish_id=dish.id)
 
-        request.data = request.data['dish']
+        request.data = request.data["dish"]
         response = super().create(request, *args, **kwargs)
         return response
 
     def retrieve(self, request, *args, **kwargs):
         dish = self.get_object()
         if not request.user.post:
-            return Response({'detail': 'У вас недостаточно прав для выполнения данного действия.'}, status=401)
+            return Response(
+                {"detail": "У вас недостаточно прав для выполнения данного действия."},
+                status=401,
+            )
         return Response(self.get_serializer(dish).data)
 
 
