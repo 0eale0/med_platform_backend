@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
+from apps.menus import serializers
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
 from apps.menus.serializers import (
     MenuSerializer,
@@ -27,27 +28,47 @@ class DayViewSet(viewsets.ModelViewSet):
     serializer_class = DaySerializer
     queryset = Day.objects.all()
 
+    def create(self, request, *args, **kwargs):
+        day = request.data['day']
+        day = Dish(**day)
+        day_dishes = request.data['day_dishes']
+        classes = []
+
+        for day_dish in day_dishes:
+            classes.append(DayDish(**day_dish, dish_id=day.id))
+
+        request.data = request.data['day']
+        response = super().create(request, *args, **kwargs)
+        return response
+    
+    def retrieve(self, request, *args, **kwargs):
+        day = self.get_object()
+        if not request.user.post:
+            return Response({'detail': 'У вас недостаточно прав для выполнения данного действия.'}, status=401)
+        return Response(self.get_serializer(day).data)
+
 
 class DishViewSet(viewsets.ModelViewSet):
     serializer_class = DishSerializer
     queryset = Dish.objects.all()
 
     def create(self, request, *args, **kwargs):
-        data = JSONParser().parse(request)  # ingredients_id
-        request.data = data["ingredients_id"]
+        dish = request.data['dish']
+        dish = Dish(**dish)
+        dish_ingredients = request.data['dish_ingredients']
 
-        dish_ingredients = DishIngredientViewSet()
-        dish_ingredients.create(request)
-        del data["ingredients_id"]
+        for dish_ingredient in dish_ingredients:
+            DishIngredient(**dish_ingredient, dish_id=dish.id)
 
-        request.data = bytes(data)
+        request.data = request.data['dish']
         response = super().create(request, *args, **kwargs)
         return response
 
     def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
+        dish = self.get_object()
+        if not request.user.post:
+            return Response({'detail': 'У вас недостаточно прав для выполнения данного действия.'}, status=401)
+        return Response(self.get_serializer(dish).data)
 
 
 class DayDishViewSet(viewsets.ModelViewSet):
@@ -58,16 +79,3 @@ class DayDishViewSet(viewsets.ModelViewSet):
 class DishIngredientViewSet(viewsets.ModelViewSet):
     serializer_class = DishIngredientSerializer
     queryset = DishIngredient.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        if isinstance(request.data, list):
-            for data in request.data:
-                serializer = self.get_serializer(data=bytes(data))
-                serializer.is_valid(raise_exception=True)
-                self.perform_create(serializer)
-
-            return Response({"error": False, "status": 200})
-        else:
-            response = super().create(request, *args, **kwargs)
-            return response
-
