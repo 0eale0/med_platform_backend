@@ -82,9 +82,7 @@ class DishViewSet(viewsets.ModelViewSet):
         list_ingredients = []
 
         for ingredient in ingredients:
-            class_ingredient = Ingredient.objects.filter(
-                id=ingredient["id"]
-            ).first()
+            class_ingredient = Ingredient.objects.filter(id=ingredient["id"]).first()
             DishIngredient.objects.create(
                 ingredient_amount=ingredient["amount"],
                 dish=dish,
