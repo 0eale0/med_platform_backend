@@ -1,3 +1,4 @@
+import dish as dish
 from rest_framework import viewsets, status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -29,34 +30,46 @@ class DayViewSet(viewsets.ModelViewSet):
     queryset = Day.objects.all()
 
     def create(self, request, *args, **kwargs):
-        day = Day.objects.create(**request.data["day"])
+        menu = Menu.objects.filter(id=request.data["menu_id"]).first()
+        day = Day.objects.create(menu=menu, **request.data["day"])
         day_dishes = request.data["day_dishes"]
+        list_day_dishes = []
 
         for day_dish in day_dishes:
-            class_day = Day.objects.filter(id=day.id).first()
-            class_dish = Ingredient.objects.filter(id=day_dish["id_dish"]).first()
-            DishIngredient.objects.create(
-                ingredient_amount=day_dish["ingredient_amount"],
-                day=class_day,
-                dish=class_dish,
+            dish = Dish.objects.filter(id=day_dish["id_dish"]).first()
+            DayDish.objects.create(
+                time=day_dish["time"],
+                dish_amount=day_dish["amount"],
+                day=day,
+                dish=dish,
             )
 
-        serializer = self.get_serializer(data=request.data["day"])
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+            copy_dict = dish.__dict__.copy()
+            copy_dict.pop("_state")
+            copy_dict.update(amount=day_dish["amount"])
+            list_day_dishes.append(copy_dict)
+
+        day_dict = day.__dict__.copy()
+        day_dict.pop("_state")
+        day_dict.update({**request.data["day"], "day_dishes": list_day_dishes})
+
+        return Response(day_dict, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, *args, **kwargs):
         day = self.get_object()
-        if not request.user.post:
-            return Response(
-                {"detail": "У вас недостаточно прав для выполнения данного действия."},
-                status=401,
-            )
-        return Response(self.get_serializer(day).data)
+        list_day_dishes = []
+        day_dishes = DayDish.objects.filter(day_id=day.id).all()
+
+        for day_dish in day_dishes:
+            copy_dict = day_dish.__dict__.copy()
+            copy_dict.pop("_state")
+            list_day_dishes.append(copy_dict)
+
+        day_dict = day.__dict__.copy()
+        day_dict.pop("_state")
+        day_dict.update({"day_dishes": list_day_dishes})
+
+        return Response(day_dict, status=status.HTTP_201_CREATED)
 
 
 class DishViewSet(viewsets.ModelViewSet):
@@ -83,8 +96,9 @@ class DishViewSet(viewsets.ModelViewSet):
             copy_dict.update(amount=ingredient["amount"])
             list_ingredients.append(copy_dict)
 
-        dish_dict = {"id": dish.id}
-        dish_dict.update({**request.data["dish"], "ingredients": list_ingredients})
+        dish_dict = dish.__dict__.copy()
+        dish_dict.pop("_state")
+        dish_dict.update({"ingredients": list_ingredients})
 
         return Response(dish_dict, status=status.HTTP_201_CREATED)
 
