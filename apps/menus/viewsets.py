@@ -31,7 +31,9 @@ class DayViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         menu = Menu.objects.filter(id=request.data["menu_id"]).first()
-        day = Day.objects.create(menu=menu, done=False, number=request.data["day_number"])
+        day = Day.objects.create(
+            menu=menu, done=False, number=request.data["day_number"]
+        )
         day_dishes = request.data["dishes"]
 
         for day_dish in day_dishes:
@@ -91,8 +93,7 @@ class DishViewSet(viewsets.ModelViewSet):
         for dish_ingredient in dish_ingredients:
             serializer = serializers.DishIngredientSerializer(dish_ingredient).data
             ingredient = dict(
-                **serializer["ingredient"],
-                amount=serializer["ingredient_amount"]
+                **serializer["ingredient"], amount=serializer["ingredient_amount"]
             )
             del ingredient["dish"]
             ingredients.append(ingredient)
