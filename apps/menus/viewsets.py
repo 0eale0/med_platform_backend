@@ -31,7 +31,7 @@ class DayViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         menu = Menu.objects.filter(id=request.data["menu_id"]).first()
-        day = Day.objects.create(menu=menu, **request.data["day"])
+        day = Day.objects.create(menu=menu, done=False, **request.data["day"])
         day_dishes = request.data["dishes"]
 
         for day_dish in day_dishes:
