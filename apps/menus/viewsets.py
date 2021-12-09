@@ -32,11 +32,10 @@ class DayViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         menu = Menu.objects.filter(id=request.data["menu_id"]).first()
         day = Day.objects.create(menu=menu, **request.data["day"])
-        day_dishes = request.data["day_dishes"]
-        list_day_dishes = []
+        day_dishes = request.data["dishes"]
 
         for day_dish in day_dishes:
-            dish = Dish.objects.filter(id=day_dish["id_dish"]).first()
+            dish = Dish.objects.filter(id=day_dish["id"]).first()
             DayDish.objects.create(
                 time=day_dish["time"],
                 dish_amount=day_dish["amount"],
@@ -44,32 +43,27 @@ class DayViewSet(viewsets.ModelViewSet):
                 dish=dish,
             )
 
-            copy_dict = dish.__dict__.copy()
-            copy_dict.pop("_state")
-            copy_dict.update(amount=day_dish["amount"])
-            list_day_dishes.append(copy_dict)
-
-        day_dict = day.__dict__.copy()
-        day_dict.pop("_state")
-        day_dict.update({**request.data["day"], "day_dishes": list_day_dishes})
-
-        return Response(day_dict, status=status.HTTP_201_CREATED)
+        return Response(serializers.DaySerializer(day).data)
 
     def retrieve(self, request, *args, **kwargs):
         day = self.get_object()
-        list_day_dishes = []
         day_dishes = DayDish.objects.filter(day_id=day.id).all()
+        dishes = []
 
         for day_dish in day_dishes:
-            copy_dict = day_dish.__dict__.copy()
-            copy_dict.pop("_state")
-            list_day_dishes.append(copy_dict)
+            serializer = serializers.DayDishSerializer(day_dish).data
+            dish = dict(
+                **serializer["dish"],
+                time=serializer["time"],
+                amount=serializer["dish_amount"]
+            )
+            del dish["day"]
+            dishes.append(dish)
 
-        day_dict = day.__dict__.copy()
-        day_dict.pop("_state")
-        day_dict.update({"day_dishes": list_day_dishes})
+        serializer_day = {**self.get_serializer(day).data, "dishes": dishes}
+        del serializer_day["menu"]
 
-        return Response(day_dict, status=status.HTTP_201_CREATED)
+        return Response(serializer_day)
 
 
 class DishViewSet(viewsets.ModelViewSet):
@@ -79,7 +73,6 @@ class DishViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         dish = Dish.objects.create(**request.data["dish"])
         ingredients = request.data["ingredients"]
-        list_ingredients = []
 
         for ingredient in ingredients:
             class_ingredient = Ingredient.objects.filter(id=ingredient["id"]).first()
@@ -88,33 +81,25 @@ class DishViewSet(viewsets.ModelViewSet):
                 dish=dish,
                 ingredient=class_ingredient,
             )
-
-            copy_dict = class_ingredient.__dict__.copy()
-            copy_dict.pop("_state")
-            copy_dict.update(amount=ingredient["amount"])
-            list_ingredients.append(copy_dict)
-
-        dish_dict = dish.__dict__.copy()
-        dish_dict.pop("_state")
-        dish_dict.update({"ingredients": list_ingredients})
-
-        return Response(dish_dict, status=status.HTTP_201_CREATED)
+        return Response(serializers.DishSerializer(dish).data)
 
     def retrieve(self, request, *args, **kwargs):
         dish = self.get_object()
-        list_ingredients = []
-        ingredients = DishIngredient.objects.filter(dish_id=dish.id).all()
+        dish_ingredients = DishIngredient.objects.filter(dish_id=dish.id).all()
+        ingredients = []
 
-        for ingredient in ingredients:
-            copy_dict = ingredient.__dict__.copy()
-            copy_dict.pop("_state")
-            list_ingredients.append(copy_dict)
+        for dish_ingredient in dish_ingredients:
+            serializer = serializers.DishIngredientSerializer(dish_ingredient).data
+            ingredient = dict(
+                **serializer["ingredient"], amount=serializer["ingredient_amount"]
+            )
+            del ingredient["dish"]
+            ingredients.append(ingredient)
 
-        dish_dict = dish.__dict__.copy()
-        dish_dict.pop("_state")
-        dish_dict.update({"ingredients": list_ingredients})
+        serializer_dish = {**self.get_serializer(dish).data, "ingredients": ingredients}
+        del serializer_dish["day"]
 
-        return Response(dish_dict, status=status.HTTP_201_CREATED)
+        return Response(serializer_dish)
 
 
 class DayDishViewSet(viewsets.ModelViewSet):
