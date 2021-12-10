@@ -43,9 +43,7 @@ class Migration(migrations.Migration):
                 ("time", models.TimeField()),
                 (
                     "day",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="menus.day"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="menus.day"),
                 ),
             ],
         ),
@@ -89,9 +87,7 @@ class Migration(migrations.Migration):
                 ("ingredient_amount", models.FloatField()),
                 (
                     "dish",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="menus.dish"
-                    ),
+                    models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="menus.dish"),
                 ),
             ],
         ),
@@ -129,31 +125,23 @@ class Migration(migrations.Migration):
                 ("calories", models.FloatField()),
                 (
                     "dish",
-                    models.ManyToManyField(
-                        through="menus.DishIngredient", to="menus.Dish"
-                    ),
+                    models.ManyToManyField(through="menus.DishIngredient", to="menus.Dish"),
                 ),
             ],
         ),
         migrations.AddField(
             model_name="dishingredient",
             name="ingredient",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="menus.ingredient"
-            ),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="menus.ingredient"),
         ),
         migrations.AddField(
             model_name="daydish",
             name="dish",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="menus.dish"
-            ),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="menus.dish"),
         ),
         migrations.AddField(
             model_name="day",
             name="menu",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, to="menus.menu"
-            ),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="menus.menu"),
         ),
     ]
