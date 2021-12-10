@@ -8,7 +8,7 @@ lint:
   stage: lint
   script:
     - pip install black
-    - black . --check --diff
+    - black . --line-length 120 --skip-string-normalization --check --diff
 
 deploy:
   stage: deploy

@@ -59,7 +59,5 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         user_obj.middle_name = user["middle_name"]
         user_obj.save()
         patient_obj = get_object_or_404(Patient, id=serializer.validated_data.get("id"))
-        serializer.update(
-            instance=patient_obj, validated_data=serializer.validated_data
-        )
+        serializer.update(instance=patient_obj, validated_data=serializer.validated_data)
         return Response({"error": False, "status": 200})
