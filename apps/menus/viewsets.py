@@ -1,6 +1,4 @@
-import dish as dish
 from rest_framework import viewsets, status
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
 from apps.menus import serializers
@@ -43,7 +41,10 @@ class DayViewSet(viewsets.ModelViewSet):
                 dish=dish,
             )
 
-        return Response(serializers.DaySerializer(day).data)
+        serializer = serializers.DaySerializer(day)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
         day = self.get_object()
@@ -51,15 +52,19 @@ class DayViewSet(viewsets.ModelViewSet):
         dishes = []
 
         for day_dish in day_dishes:
-            serializer = serializers.DayDishSerializer(day_dish).data
-            dish = dict(**serializer["dish"], time=serializer["time"], amount=serializer["dish_amount"])
+            day_dish_serializer = serializers.DayDishSerializer(day_dish).data
+            dish = dict(
+                **day_dish_serializer["dish"],
+                time=day_dish_serializer["time"],
+                amount=day_dish_serializer["dish_amount"]
+            )
             del dish["day"]
             dishes.append(dish)
 
-        serializer_day = {**self.get_serializer(day).data, "dishes": dishes}
-        del serializer_day["menu"]
+        day_serializer = {**self.get_serializer(day).data, "dishes": dishes}
+        del day_serializer["menu"]
 
-        return Response(serializer_day)
+        return Response(day_serializer)
 
 
 class DishViewSet(viewsets.ModelViewSet):
@@ -77,7 +82,11 @@ class DishViewSet(viewsets.ModelViewSet):
                 dish=dish,
                 ingredient=class_ingredient,
             )
-        return Response(serializers.DishSerializer(dish).data)
+
+        serializer = serializers.DishSerializer(dish)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
         dish = self.get_object()
@@ -85,15 +94,18 @@ class DishViewSet(viewsets.ModelViewSet):
         ingredients = []
 
         for dish_ingredient in dish_ingredients:
-            serializer = serializers.DishIngredientSerializer(dish_ingredient).data
-            ingredient = dict(**serializer["ingredient"], amount=serializer["ingredient_amount"])
+            dish_ingredient_serializer = serializers.DishIngredientSerializer(dish_ingredient).data
+            ingredient = dict(
+                **dish_ingredient_serializer["ingredient"],
+                amount=dish_ingredient_serializer["ingredient_amount"]
+            )
             del ingredient["dish"]
             ingredients.append(ingredient)
 
-        serializer_dish = {**self.get_serializer(dish).data, "ingredients": ingredients}
-        del serializer_dish["day"]
+        dish_serializer = {**self.get_serializer(dish).data, "ingredients": ingredients}
+        del dish_serializer["day"]
 
-        return Response(serializer_dish)
+        return Response(dish_serializer)
 
 
 class DayDishViewSet(viewsets.ModelViewSet):
