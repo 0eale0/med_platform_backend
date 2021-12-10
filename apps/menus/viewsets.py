@@ -96,8 +96,7 @@ class DishViewSet(viewsets.ModelViewSet):
         for dish_ingredient in dish_ingredients:
             dish_ingredient_serializer = serializers.DishIngredientSerializer(dish_ingredient).data
             ingredient = dict(
-                **dish_ingredient_serializer["ingredient"],
-                amount=dish_ingredient_serializer["ingredient_amount"]
+                **dish_ingredient_serializer["ingredient"], amount=dish_ingredient_serializer["ingredient_amount"]
             )
             del ingredient["dish"]
             ingredients.append(ingredient)
