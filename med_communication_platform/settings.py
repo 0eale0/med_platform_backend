@@ -34,10 +34,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru"]
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:8081",
-    "http://med-platform.a.uenv.ru"
-]
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8081", "http://med-platform.a.uenv.ru"]
 
 
 # Application definition
@@ -66,7 +63,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "corsheaders.middleware.CorsMiddleware"
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "med_communication_platform.urls"
