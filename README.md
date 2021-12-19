@@ -1,6 +1,6 @@
 # back-end part of the med-communication-platform
 
-## Установка и запуск проекта
+## Установка и запуск backend проекта
 
 1) сконфигурировать .env файл исходя из .example.env
 2) `python3 -m venv .venv` - создать виртуальное окружение
