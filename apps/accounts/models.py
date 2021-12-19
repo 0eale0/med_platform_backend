@@ -20,6 +20,9 @@ class Doctor(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
+
 
 class Patient(models.Model):
     phone_number = models.CharField(max_length=100)  # unique=True
@@ -41,3 +44,6 @@ class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, **NULLABLE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"

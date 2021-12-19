@@ -1,8 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from apps.menus import serializers
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
+from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay
 from apps.menus.serializers import (
     MenuSerializer,
     IngredientSerializer,
@@ -16,16 +18,19 @@ from apps.menus.serializers import (
 class MenuViewSet(viewsets.ModelViewSet):
     serializer_class = MenuSerializer
     queryset = Menu.objects.all()
+    permission_classes = [IsAuthenticated & IsDoctor]
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
+    permission_classes = [IsAuthenticated & IsDoctor]
 
 
 class DayViewSet(viewsets.ModelViewSet):
     serializer_class = DaySerializer
     queryset = Day.objects.all()
+    permission_classes = [IsAuthenticated & IsOwnerOrReadOnlyDay]
 
     def create(self, request, *args, **kwargs):
         menu = Menu.objects.filter(id=request.data["menu_id"]).first()
@@ -70,6 +75,7 @@ class DayViewSet(viewsets.ModelViewSet):
 class DishViewSet(viewsets.ModelViewSet):
     serializer_class = DishSerializer
     queryset = Dish.objects.all()
+    permission_classes = [IsAuthenticated & IsDoctor]
 
     def create(self, request, *args, **kwargs):
         dish = Dish.objects.create(**request.data["dish"])
@@ -110,8 +116,10 @@ class DishViewSet(viewsets.ModelViewSet):
 class DayDishViewSet(viewsets.ModelViewSet):
     serializer_class = DayDishSerializer
     queryset = DayDish.objects.all()
+    permission_classes = [IsAuthenticated & IsDoctor]
 
 
 class DishIngredientViewSet(viewsets.ModelViewSet):
     serializer_class = DishIngredientSerializer
     queryset = DishIngredient.objects.all()
+    permission_classes = [IsAuthenticated & IsDoctor]

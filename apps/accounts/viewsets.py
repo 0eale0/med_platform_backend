@@ -9,12 +9,13 @@ from transliterate import translit
 
 from apps.accounts.models import Patient, User
 from apps.accounts.serializers import PatientForDoctorSerializer
+from apps.menus.permissions import IsDoctor
 
 
 class PatientViewForDoctor(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientForDoctorSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated & IsDoctor]
 
     @staticmethod
     def generate_username(fio: list) -> str:
