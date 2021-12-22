@@ -1,7 +1,10 @@
+from Tools.scripts.make_ctype import method
 from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from apps.accounts.models import Patient
 from apps.menus import serializers
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
 from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay
@@ -123,3 +126,21 @@ class DishIngredientViewSet(viewsets.ModelViewSet):
     serializer_class = DishIngredientSerializer
     queryset = DishIngredient.objects.all()
     permission_classes = [IsAuthenticated & IsDoctor]
+
+    @action(methods=['POST'], detail=False)
+    def dish_ingredient_list(self, request):
+        patient = Patient.objects.filter(id=request.user.id).first()
+        day = Day.objects.filter(number=request.data["day_number"], menu_id=patient.menu_id).first()
+        day_dishes = DayDish.objects.filter(day_id=day.id)
+
+        dish_ingredient = []
+        for day_dish in day_dishes:
+            day_dish_serializer = serializers.DayDishSerializer(day_dish).data
+            result = dict(
+                day_dish_serializer["dish"],
+                dish_amount=day_dish_serializer["dish_amount"],
+                time=day_dish_serializer["time"],
+            )
+            del result["day"]
+            dish_ingredient.append(result)
+        return Response(dish_ingredient)
