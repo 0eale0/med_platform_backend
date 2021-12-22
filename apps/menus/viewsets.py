@@ -138,7 +138,7 @@ class DishIngredientViewSet(viewsets.ModelViewSet):
             day_dish_serializer = serializers.DayDishSerializer(day_dish).data
             result = dict(
                 day_dish_serializer["dish"],
-                dish_amount=day_dish_serializer["dish_amount"],
+                amount=day_dish_serializer["dish_amount"],
                 time=day_dish_serializer["time"],
             )
             del result["day"]
