@@ -94,12 +94,12 @@ WSGI_APPLICATION = "med_communication_platform.wsgi.application"
 
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': '5432',
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ.get("DB_NAME", "dbname"),
+        "USER": os.environ.get("DB_USER", "dbuser"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "dbpass"),
+        "HOST": os.environ.get("DB_HOST", "dbhost"),
+        "PORT": "5432",
     }
 }
 
