@@ -25,5 +25,5 @@ urlpatterns = [
     path(r"", include("apps.accounts.urls")),
 ]
 
-# urlpatterns += accounts_router.urls
+urlpatterns += accounts_router.urls
 urlpatterns += menus_router.urls
