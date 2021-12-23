@@ -4,14 +4,25 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
 from apps.menus.models import Menu
+from apps.accounts.auth import UserProfileManager
 
 NULLABLE = {"null": True, "blank": True}
 
 
 class User(AbstractUser):
+    email = models.EmailField(max_length=255, unique=True)
+
     middle_name = models.CharField(max_length=150)
     first_name = models.CharField(_("first name"), max_length=150, blank=False)
     last_name = models.CharField(_("last name"), max_length=150, blank=False)
+
+    objects = UserProfileManager()
+
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'email'
+
+    def __str__(self):
+        return self.email
 
 
 class Doctor(models.Model):
