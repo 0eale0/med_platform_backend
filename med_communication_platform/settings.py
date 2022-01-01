@@ -35,7 +35,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru"]
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8081", "http://med-platform.a.uenv.ru"]
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8081", "http://127.0.0.1:8080", "http://med-platform.a.uenv.ru"]
 
 
 # Application definition
@@ -161,8 +161,8 @@ REST_FRAMEWORK = {
 # Simple jwt
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=365),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=365),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
@@ -182,6 +182,6 @@ SIMPLE_JWT = {
     "TOKEN_TYPE_CLAIM": "token_type",
     "JTI_CLAIM": "jti",
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=365),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=365),
 }
