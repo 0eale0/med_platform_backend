@@ -24,12 +24,5 @@ class PatientForDoctorSerializer(serializers.ModelSerializer):
 class ActivateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "middle_name", "password"]
-
-
-class PatientSelfEditSerializer(serializers.ModelSerializer):
-    user = ActivateUserSerializer(read_only=False)
-
-    class Meta:
-        model = Patient
-        exclude = ["id", "link_token", "doctor", "menu"]
+        fields = ["first_name", "last_name", "middle_name", "password", "email"]
+        read_only_fields = ('first_name', 'last_name', 'middle_name')
