@@ -1,10 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
+from rest_framework import permissions, status
 
 from apps.accounts.models import Patient, User
 from apps.accounts.serializers import ActivateUserSerializer
-from apps.menus.permissions import IsDoctor
 
 
 class ActivateUserView(APIView):
@@ -14,22 +13,22 @@ class ActivateUserView(APIView):
     def get(self, request):
         token = request.query_params.get('token')
         if not token:
-            return Response({"error": "pass token in url params"})
+            return Response({"detail": "pass token in url params"}, status=status.HTTP_404_NOT_FOUND)
         patient = Patient.objects.filter(link_token=token).first()
 
-        if not patient:
-            return Response({"error": "user already active or not created"})
+        if patient is None:
+            return Response({"detail": "user already active or not created"}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.serializer_class(patient.user)
         return Response({"data": serializer.data})
 
     def post(self, request):
         token = request.query_params.get('token')
         if not token:
-            return Response({"error": "pass token in url params"})
+            return Response({"detail": "pass token in url params"}, status=status.HTTP_404_NOT_FOUND)
         patient = Patient.objects.filter(link_token=token).first()
         user = User.objects.filter(patient=patient).first()
-        if not patient:
-            return Response({"error": "user already active or not created"})
+        if patient is None:
+            return Response({"detail": "user already active or not created"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -40,4 +39,4 @@ class ActivateUserView(APIView):
             user.save()
             patient.save()
             return Response({"status": "ok"})
-        return Response({"status": "not ok"})
+        return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
