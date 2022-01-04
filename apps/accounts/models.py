@@ -22,7 +22,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
 
     def __str__(self):
-        return self.email
+        return f'{self.username}'
 
 
 class Doctor(models.Model):
@@ -40,7 +40,7 @@ class Patient(models.Model):
     medical_card_number = models.CharField(max_length=255, **NULLABLE)
     insurance_policy_number = models.CharField(max_length=100, **NULLABLE)
     birth_date = models.DateField()
-    link_token = models.CharField(max_length=100)
+    link_token = models.CharField(max_length=100, **NULLABLE)
     sex = forms.ChoiceField(choices=["male", "female"])
     activity_level = models.CharField(max_length=255, **NULLABLE)
     weight = models.FloatField(**NULLABLE)
@@ -57,4 +57,4 @@ class Patient(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
+        return f"{self.user.username}"

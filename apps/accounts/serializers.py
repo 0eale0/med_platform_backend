@@ -3,15 +3,12 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
-
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "middle_name"]
+        fields = ["first_name", "last_name", "middle_name"]
 
 
 class PatientForDoctorSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
     user = UserSerializer(read_only=False)
     join_link = serializers.SerializerMethodField(read_only=True)
 
@@ -21,4 +18,18 @@ class PatientForDoctorSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_join_link(obj):
-        return f"https://site/login/{obj.link_token}"
+        return f"{obj.link_token}"
+
+
+class ActivateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "middle_name", "password"]
+
+
+class PatientSelfEditSerializer(serializers.ModelSerializer):
+    user = ActivateUserSerializer(read_only=False)
+
+    class Meta:
+        model = Patient
+        exclude = ["id", "link_token", "doctor", "menu"]

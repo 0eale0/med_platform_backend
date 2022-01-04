@@ -31,9 +31,10 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        first_name = serializer.validated_data.pop("first_name")
-        middle_name = serializer.validated_data.pop("middle_name")
-        last_name = serializer.validated_data.pop("last_name")
+        user = serializer.validated_data.pop("user")
+        first_name = user.pop("first_name")
+        middle_name = user.pop("middle_name")
+        last_name = user.pop("last_name")
         username = self.generate_username(fio=[first_name, middle_name])
         password = self.generate_token()
         patient_object = serializer.save()
@@ -44,8 +45,10 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
             first_name=first_name,
             last_name=last_name,
             middle_name=middle_name,
+            email=f'{username}@gmail.com',
         )
-        user.groups.id = 1  # TODO add flexible group addition
+        user.is_active = False
+        user.save()
         patient_object.user = user
         patient_object.save()
         return Response({"error": False, "status": 200})
