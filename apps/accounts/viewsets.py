@@ -37,7 +37,7 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
                     "middle_name": data.pop("middle_name"),
                     "last_name": data.pop("last_name"),
                 },
-                "doctor": request.user.id
+                "doctor": request.user.id,
             }
         )
         serializer = self.get_serializer(data=data)
