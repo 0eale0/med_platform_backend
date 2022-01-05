@@ -118,17 +118,12 @@ class DishViewSet(viewsets.ModelViewSet):
 class DayDishViewSet(viewsets.ModelViewSet):
     serializer_class = DayDishSerializer
     queryset = DayDish.objects.all()
-    permission_classes = [IsAuthenticated & IsDoctor]
-
-
-class DishIngredientViewSet(viewsets.ModelViewSet):
-    serializer_class = DishIngredientSerializer
-    queryset = DishIngredient.objects.all()
-    permission_classes = [IsAuthenticated & IsDoctor]
+    permission_classes = [IsAuthenticated] # TODO: Set IsDoctor or IsDayOwner
 
     @action(methods=['POST'], detail=False)
-    def dish_ingredient_list(self, request):
-        patient = Patient.objects.filter(id=request.user.id).first()
+    def day_dish_list(self, request):
+        user_id = request.data["user_id"] if "user_id" in request.data.keys() else request.user.id
+        patient = Patient.objects.filter(id=user_id).first()
         day = Day.objects.filter(number=request.data["day_number"], menu_id=patient.menu_id).first()
         day_dishes = DayDish.objects.filter(day_id=day.id)
 
@@ -143,3 +138,9 @@ class DishIngredientViewSet(viewsets.ModelViewSet):
             del result["day"]
             dish_ingredient.append(result)
         return Response(dish_ingredient)
+
+
+class DishIngredientViewSet(viewsets.ModelViewSet):
+    serializer_class = DishIngredientSerializer
+    queryset = DishIngredient.objects.all()
+    permission_classes = [IsAuthenticated & IsDoctor]
