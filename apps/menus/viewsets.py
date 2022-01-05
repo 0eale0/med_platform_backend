@@ -118,7 +118,7 @@ class DishViewSet(viewsets.ModelViewSet):
 class DayDishViewSet(viewsets.ModelViewSet):
     serializer_class = DayDishSerializer
     queryset = DayDish.objects.all()
-    permission_classes = [IsAuthenticated] # TODO: Set IsDoctor or IsDayOwner
+    permission_classes = [IsAuthenticated]  # TODO: Set IsDoctor or IsDayOwner
 
     @action(methods=['POST'], detail=False)
     def day_dish_list(self, request):
