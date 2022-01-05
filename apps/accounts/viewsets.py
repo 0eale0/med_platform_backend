@@ -29,19 +29,30 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         return str(uuid4())
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        data = request.data
+        data.update(
+            {
+                "user": {
+                    "first_name": data.pop("first_name"),
+                    "middle_name": data.pop("middle_name"),
+                    "last_name": data.pop("last_name"),
+                },
+                "doctor": request.user.id,
+            }
+        )
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data.pop("user")
         first_name = user.pop("first_name")
         middle_name = user.pop("middle_name")
         last_name = user.pop("last_name")
-        username = self.generate_username(fio=[first_name, middle_name])
-        password = self.generate_token()
+        username = self.generate_username(fio=[first_name, middle_name, last_name])
+        token = self.generate_token()
         patient_object = serializer.save()
-        patient_object.link_token = password
+        patient_object.link_token = token
         user = User.objects.create(
             username=username,
-            password=password,
+            password=token,
             first_name=first_name,
             last_name=last_name,
             middle_name=middle_name,
