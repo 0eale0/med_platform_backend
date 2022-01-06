@@ -24,6 +24,16 @@ class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
     permission_classes = [IsAuthenticated & IsDoctor]
 
+    @action(methods=['GET'], detail=True)
+    def day_list(self, request, pk=None):
+        menu = Menu.objects.filter(id=pk).first()
+        days = Day.objects.filter(menu=menu).all()
+        days_serialized = []
+        for day in days:
+            day_serialized = DaySerializer(day).data
+            days_serialized.append(day_serialized)
+        return Response(days_serialized)
+
 
 class IngredientViewSet(viewsets.ModelViewSet):
     serializer_class = IngredientSerializer
