@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -119,6 +121,18 @@ class DayDishViewSet(viewsets.ModelViewSet):
     serializer_class = DayDishSerializer
     queryset = DayDish.objects.all()
     permission_classes = [IsAuthenticated]  # TODO: Set IsDoctor or IsDayOwner
+
+    def create(self, request, *args, **kwargs):
+        hours, minutes, *_ = list(map(int, request.data["time"].split(":")))
+        day_dish = DayDish.objects.create(
+            dish_amount=request.data["dish_amount"],
+            time=datetime.time(hour=hours, minute=minutes),
+            day=Day.objects.filter(id=int(request.data["day_id"])).first(),
+            dish=Dish.objects.filter(id=int(request.data["dish_id"])).first()
+        )
+        day_dish.save()
+        print(type(day_dish.time))
+        return Response(DayDishSerializer(day_dish).data)
 
     @action(methods=['POST'], detail=False)
     def day_dish_list(self, request):
