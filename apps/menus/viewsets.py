@@ -85,6 +85,14 @@ class DayViewSet(viewsets.ModelViewSet):
 
         return Response(day_serializer)
 
+    @action(methods=['POST'], detail=False)
+    def create_day(self, request):
+        patient = Patient.objects.filter(id=request.data["patient_id"]).first()
+        last_day = Day.objects.filter(menu=patient.menu).order_by('-number').first()
+        new_day = Day.objects.create(number=last_day.number+1, menu=patient.menu)
+        new_day.save()
+        return Response(status=201)
+
 
 class DishViewSet(viewsets.ModelViewSet):
     serializer_class = DishSerializer
