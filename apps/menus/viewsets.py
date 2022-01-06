@@ -159,6 +159,7 @@ class DayDishViewSet(viewsets.ModelViewSet):
                 day_dish_serializer["dish"],
                 amount=day_dish_serializer["dish_amount"],
                 time=day_dish_serializer["time"],
+                day_dish_id=day_dish_serializer["id"],
             )
             del result["day"]
             dish_ingredient.append(result)
