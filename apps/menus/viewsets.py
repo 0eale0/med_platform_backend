@@ -159,7 +159,15 @@ class DayDishViewSet(viewsets.ModelViewSet):
             dish=Dish.objects.filter(id=int(request.data["dish_id"])).first(),
         )
         day_dish.save()
-        return Response(DayDishSerializer(day_dish).data)
+        day_dish_serializer = serializers.DayDishSerializer(day_dish).data
+        result = dict(
+            day_dish_serializer["dish"],
+            amount=day_dish_serializer["dish_amount"],
+            time=day_dish_serializer["time"],
+            day_dish_id=day_dish_serializer["id"],
+        )
+        del result["day"]
+        return Response(result)
 
     @action(methods=['POST'], detail=False)
     def day_dish_list(self, request):
@@ -170,7 +178,7 @@ class DayDishViewSet(viewsets.ModelViewSet):
         day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
         day_dishes = DayDish.objects.filter(day_id=day.id)
 
-        dish_ingredient = []
+        day_dishes_serialized = []
         for day_dish in day_dishes:
             day_dish_serializer = serializers.DayDishSerializer(day_dish).data
             result = dict(
@@ -180,8 +188,8 @@ class DayDishViewSet(viewsets.ModelViewSet):
                 day_dish_id=day_dish_serializer["id"],
             )
             del result["day"]
-            dish_ingredient.append(result)
-        return Response(dish_ingredient)
+            day_dishes_serialized.append(result)
+        return Response(day_dishes_serialized)
 
 
 class DishIngredientViewSet(viewsets.ModelViewSet):
