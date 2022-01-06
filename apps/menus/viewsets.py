@@ -91,7 +91,7 @@ class DayViewSet(viewsets.ModelViewSet):
         last_day = Day.objects.filter(menu=patient.menu).order_by('-number').first()
         new_day = Day.objects.create(number=last_day.number+1, menu=patient.menu)
         new_day.save()
-        return Response(status=201)
+        return Response(DaySerializer(new_day).data)
 
 
 class DishViewSet(viewsets.ModelViewSet):
