@@ -26,8 +26,8 @@ class MenuViewSet(viewsets.ModelViewSet):
 
     @action(methods=['GET'], detail=True)
     def day_list(self, request, pk=None):
-        menu = Menu.objects.filter(id=pk).first()
-        days = Day.objects.filter(menu=menu).all()
+        patient = Patient.objects.filter(id=pk).first()
+        days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
         for day in days:
             day_serialized = DaySerializer(day).data
