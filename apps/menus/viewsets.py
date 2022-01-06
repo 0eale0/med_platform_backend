@@ -138,7 +138,7 @@ class DayDishViewSet(viewsets.ModelViewSet):
             dish_amount=request.data["dish_amount"],
             time=datetime.time(hour=hours, minute=minutes),
             day=Day.objects.filter(id=int(request.data["day_id"])).first(),
-            dish=Dish.objects.filter(id=int(request.data["dish_id"])).first()
+            dish=Dish.objects.filter(id=int(request.data["dish_id"])).first(),
         )
         day_dish.save()
         return Response(DayDishSerializer(day_dish).data)
