@@ -9,6 +9,7 @@ from transliterate import translit
 
 from apps.accounts.models import Patient, User
 from apps.accounts.serializers import PatientForDoctorSerializer
+from apps.menus.models import Menu
 from apps.menus.permissions import IsDoctor
 
 
@@ -61,6 +62,9 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         user.is_active = False
         user.save()
         patient_object.user = user
+        menu = Menu.objects.create()
+        menu.save()
+        patient_object.menu = menu
         patient_object.save()
         return Response({"error": False, "status": 200})
 
