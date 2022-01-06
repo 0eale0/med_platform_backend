@@ -25,8 +25,18 @@ class MenuViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     @action(methods=['GET'], detail=True)
-    def day_list(self, request, pk=None):
+    def day_list_1(self, request, pk=None):
         patient = Patient.objects.filter(id=pk).first()
+        days = Day.objects.filter(menu=patient.menu).all()
+        days_serialized = []
+        for day in days:
+            day_serialized = DaySerializer(day).data
+            days_serialized.append(day_serialized)
+        return Response(days_serialized)
+
+    @action(methods=['GET'], detail=False)
+    def day_list_2(self, request):
+        patient = Patient.objects.filter(user=request.user).first()
         days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
         for day in days:
