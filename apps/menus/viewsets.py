@@ -145,9 +145,11 @@ class DayDishViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=False)
     def day_dish_list(self, request):
-        user_id = request.data["user_id"] if "user_id" in request.data.keys() else request.user.id
-        patient = Patient.objects.filter(id=user_id).first()
-        day = Day.objects.filter(number=request.data["day_number"], menu_id=patient.menu_id).first()
+        if "patient_id" in request.data.keys():
+            patient = Patient.objects.filter(id=request.data["patient_id"]).first()
+        else:
+            patient = Patient.objects.filter(user=request.user).first()
+        day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
         day_dishes = DayDish.objects.filter(day_id=day.id)
 
         dish_ingredient = []
