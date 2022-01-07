@@ -2,8 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
-from apps.accounts.models import Patient, User
-from apps.accounts.serializers import ActivateUserSerializer, PatientForDoctorSerializer
+from apps.accounts.models import Patient, User, Doctor
+from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
 
 
 class ActivateUserView(APIView):
@@ -44,12 +44,15 @@ class ActivateUserView(APIView):
 
 class WhoAmIView(APIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = PatientForDoctorSerializer
+    serializer_class = UserSerializer
 
     def get(self, request):
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
+        doctor = Doctor.objects.filter(user=request.user).first()
         patient = Patient.objects.filter(user=request.user).first()
-        serializer = self.serializer_class(patient)
-        return Response({"data": serializer.data})
+        user_serialized = self.serializer_class(request.user).data
+        user_serialized["is_doctor"] = bool(doctor)
+        user_serialized["is_patient"] = bool(patient)
+        return Response(user_serialized)
 
