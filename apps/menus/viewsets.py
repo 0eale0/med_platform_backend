@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from apps.accounts.models import Patient
 from apps.menus import serializers
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
-from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay
+from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner
 from apps.menus.serializers import (
     MenuSerializer,
     IngredientSerializer,
@@ -158,7 +158,7 @@ class DishViewSet(viewsets.ModelViewSet):
 class DayDishViewSet(viewsets.ModelViewSet):
     serializer_class = DayDishSerializer
     queryset = DayDish.objects.all()
-    permission_classes = [IsAuthenticated]  # TODO: Set IsDoctor or IsDayOwner
+    permission_classes = [IsDoctor | IsDayOwner]  # TODO: Set IsDoctor or IsDayOwner
 
     def create(self, request, *args, **kwargs):
         hours, minutes, *_ = list(map(int, request.data["time"].split(":")))

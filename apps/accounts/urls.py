@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from apps.accounts.views import ActivateUserView
+from apps.accounts.views import ActivateUserView, WhoAmIView
 from apps.accounts.viewsets import PatientViewForDoctor
 
 router = routers.SimpleRouter()
@@ -14,4 +14,5 @@ urlpatterns = [
     path(r"api/auth/token/", TokenObtainPairView.as_view()),
     path(r"api/auth/token/refresh/", TokenRefreshView.as_view()),
     path(r"api/accounts/activate/", ActivateUserView.as_view()),
+    path(r"api/accounts/whoami/", WhoAmIView.as_view())
 ]

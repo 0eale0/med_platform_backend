@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 
 from apps.accounts.models import Patient, User
-from apps.accounts.serializers import ActivateUserSerializer
+from apps.accounts.serializers import ActivateUserSerializer, PatientForDoctorSerializer
 
 
 class ActivateUserView(APIView):
@@ -40,3 +40,16 @@ class ActivateUserView(APIView):
             patient.save()
             return Response({"status": "ok"})
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class WhoAmIView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = PatientForDoctorSerializer
+
+    def get(self, request):
+        if request.user.is_anonymous:
+            return Response({"error": "login to view info"})
+        patient = Patient.objects.filter(user=request.user).first()
+        serializer = self.serializer_class(patient)
+        return Response({"data": serializer.data})
+
