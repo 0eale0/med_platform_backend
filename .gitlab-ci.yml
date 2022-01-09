@@ -23,4 +23,5 @@ deploy:
     name: UniEnv
     url: http://a.uenv.ru
   only:
-    - develop
+    variables:
+      - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
