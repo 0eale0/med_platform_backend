@@ -14,5 +14,5 @@ urlpatterns = [
     path(r"api/auth/token/", TokenObtainPairView.as_view()),
     path(r"api/auth/token/refresh/", TokenRefreshView.as_view()),
     path(r"api/accounts/activate/", ActivateUserView.as_view()),
-    path(r"api/accounts/whoami/", WhoAmIView.as_view())
+    path(r"api/accounts/whoami/", WhoAmIView.as_view()),
 ]

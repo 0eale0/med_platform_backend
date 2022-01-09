@@ -55,4 +55,3 @@ class WhoAmIView(APIView):
         user_serialized["is_doctor"] = bool(doctor)
         user_serialized["is_patient"] = bool(patient)
         return Response(user_serialized)
-
