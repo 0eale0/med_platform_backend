@@ -32,7 +32,7 @@ SECRET_KEY = "django-insecure-u^2=^ousriw$1b#hclr78c8gnvcj!edb!^dmh0hlb1zu()d@dw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "api-med-plaform.a.uenv.ru"]
+ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru"]
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8080", "http://med-platform.a.uenv.ru", "http://med-plaform.a.uenv.ru"]
