@@ -11,9 +11,9 @@ NULLABLE = {"null": True, "blank": True}
 class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
 
-    middle_name = models.CharField(max_length=150)
-    first_name = models.CharField(_("first name"), max_length=150, blank=False)
-    last_name = models.CharField(_("last name"), max_length=150, blank=False)
+    middle_name = models.CharField(max_length=150, **NULLABLE)
+    first_name = models.CharField(_("first name"), max_length=150, **NULLABLE)
+    last_name = models.CharField(_("last name"), max_length=150, **NULLABLE)
 
     objects = UserProfileManager()
 
@@ -35,24 +35,24 @@ class Doctor(models.Model):
 
 
 class Patient(models.Model):
-    phone_number = models.CharField(max_length=100)  # unique=True
+    phone_number = models.CharField(max_length=100, **NULLABLE)  # unique=True
     medical_card_number = models.CharField(max_length=255, **NULLABLE)
     insurance_policy_number = models.CharField(max_length=100, **NULLABLE)
-    birth_date = models.DateField()
+    birth_date = models.DateField(**NULLABLE)
     link_token = models.CharField(max_length=100, **NULLABLE)
-    sex = models.CharField(max_length=6, choices=[("male", "male"), ("female", "female")])
+    sex = models.CharField(max_length=6, choices=[("male", "male"), ("female", "female")], **NULLABLE)
     activity_level = models.CharField(max_length=255, **NULLABLE)
     weight = models.FloatField(**NULLABLE)
     waist = models.FloatField(**NULLABLE)
     height = models.FloatField(**NULLABLE)
     hips = models.IntegerField(**NULLABLE)
     medical_information = models.TextField(**NULLABLE)
-    country = models.CharField(max_length=60)
-    city = models.CharField(max_length=60)
-    address = models.CharField(max_length=60)
+    country = models.CharField(max_length=60, **NULLABLE)
+    city = models.CharField(max_length=60, **NULLABLE)
+    address = models.CharField(max_length=60, **NULLABLE)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, **NULLABLE)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, **NULLABLE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
 
     def __str__(self):
