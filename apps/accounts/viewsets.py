@@ -48,7 +48,7 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         menu.save()
         patient_object.menu = menu
         patient_object.save()
-        return Response({"error": False,"invite_link": f"{request.build_absolute_uri()}{token}", "status": 200})
+        return Response({"error": False, "invite_link": f"{request.build_absolute_uri()}{token}", "status": 200})
 
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
