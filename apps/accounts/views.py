@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 
 from apps.accounts.models import Patient, User, Doctor
-from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
+from apps.accounts.serializers import ActivateUserSerializer, UserSerializer, PatientForDoctorSerializer
 
 
 class ActivateUserView(APIView):
@@ -34,6 +34,23 @@ class ActivateUserView(APIView):
         if serializer.is_valid(raise_exception=True):
             user.set_password(serializer.validated_data.pop("password"))
             user.email = serializer.validated_data.pop("email")
+            user.first_name = serializer.validated_data.pop("first_name")
+            user.last_name = serializer.validated_data.pop("last_name")
+            user.middle_name = serializer.validated_data.pop("middle_name")
+            patient.phone_number = serializer.validated_data.pop("phone_number")
+            patient.medical_card_number = serializer.validated_data.pop("medical_card_number")
+            patient.insurance_policy_number = serializer.validated_data.pop("insurance_policy_number")
+            patient.birth_date = serializer.validated_data.pop("birth_date")
+            patient.sex = serializer.validated_data.pop("sex")
+            patient.activity_level = serializer.validated_data.pop("activity_level")
+            patient.weight = serializer.validated_data.pop("weight")
+            patient.waist = serializer.validated_data.pop("waist")
+            patient.height = serializer.validated_data.pop("height")
+            patient.hips = serializer.validated_data.pop("hips")
+            patient.medical_information = serializer.validated_data.pop("medical_information")
+            patient.country = serializer.validated_data.pop("country")
+            patient.city = serializer.validated_data.pop("city")
+            patient.address = serializer.validated_data.pop("address")
             user.is_active = True
             patient.link_token = None
             user.save()
