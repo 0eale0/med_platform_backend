@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 
 from apps.accounts.models import Patient, User, Doctor
-from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
+from apps.accounts.serializers import ActivateUserSerializer, UserSerializer, PatientForDoctorSerializer
 
 
 class ActivateUserView(APIView):
@@ -32,8 +32,28 @@ class ActivateUserView(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            user.set_password(serializer.validated_data.pop("password"))
-            user.email = serializer.validated_data.pop("email")
+            print("================================================================================")
+            print(serializer.validated_data)
+            print("================================================================================")
+            user.set_password(serializer.validated_data["user"]["password"])
+            user.email = serializer.validated_data["user"]["email"]
+            user.first_name = serializer.validated_data["user"]["first_name"]
+            user.last_name = serializer.validated_data["user"]["last_name"]
+            user.middle_name = serializer.validated_data["user"]["middle_name"]
+            patient.phone_number = serializer.validated_data["patient"]["phone_number"]
+            patient.medical_card_number = serializer.validated_data["patient"]["medical_card_number"]
+            patient.insurance_policy_number = serializer.validated_data["patient"]["insurance_policy_number"]
+            patient.birth_date = serializer.validated_data["patient"]["birth_date"]
+            patient.sex = serializer.validated_data["patient"]["sex"]
+            patient.activity_level = serializer.validated_data["patient"]["activity_level"]
+            patient.weight = serializer.validated_data["patient"]["weight"]
+            patient.waist = serializer.validated_data["patient"]["waist"]
+            patient.height = serializer.validated_data["patient"]["height"]
+            patient.hips = serializer.validated_data["patient"]["hips"]
+            patient.medical_information = serializer.validated_data["patient"]["medical_information"]
+            patient.country = serializer.validated_data["patient"]["country"]
+            patient.city = serializer.validated_data["patient"]["city"]
+            patient.address = serializer.validated_data["patient"]["address"]
             user.is_active = True
             patient.link_token = None
             user.save()

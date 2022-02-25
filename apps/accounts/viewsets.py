@@ -1,4 +1,5 @@
 import random
+import string
 from uuid import uuid4
 
 from rest_framework import viewsets
@@ -30,33 +31,14 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         return str(uuid4())
 
     def create(self, request, *args, **kwargs):
-        data = request.data
-        data.update(
-            {
-                "user": {
-                    "first_name": data.pop("first_name"),
-                    "middle_name": data.pop("middle_name"),
-                    "last_name": data.pop("last_name"),
-                },
-                "doctor": request.user.id,
-            }
-        )
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data.pop("user")
-        first_name = user.pop("first_name")
-        middle_name = user.pop("middle_name")
-        last_name = user.pop("last_name")
-        username = self.generate_username(fio=[first_name, middle_name, last_name])
+        username = ''.join(random.choices(string.ascii_uppercase + string.digits, k=15))
         token = self.generate_token()
-        patient_object = serializer.save()
+        patient_object = Patient(doctor=request.user.doctor)
+        patient_object.save()
         patient_object.link_token = token
         user = User.objects.create(
             username=username,
             password=token,
-            first_name=first_name,
-            last_name=last_name,
-            middle_name=middle_name,
             email=f'{username}@gmail.com',
         )
         user.is_active = False
@@ -66,7 +48,7 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         menu.save()
         patient_object.menu = menu
         patient_object.save()
-        return Response({"error": False, "status": 200})
+        return Response({"error": False, "invite_link": f"{request.build_absolute_uri()}{token}", "status": 200})
 
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

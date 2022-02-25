@@ -5,7 +5,8 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "middle_name"]
+        fields = ["first_name", "last_name", "middle_name", "email", "password"]
+        write_only_fields = ["password"]
 
 
 class PatientForDoctorSerializer(serializers.ModelSerializer):
@@ -21,8 +22,16 @@ class PatientForDoctorSerializer(serializers.ModelSerializer):
         return f"{obj.link_token}"
 
 
-class ActivateUserSerializer(serializers.ModelSerializer):
+class ActivatePatientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ["first_name", "last_name", "middle_name", "password", "email"]
-        read_only_fields = ('first_name', 'last_name', 'middle_name')
+        model = Patient
+        exclude = ["link_token", "doctor", "menu"]
+
+
+class ActivateUserSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=False)
+    patient = ActivatePatientSerializer(read_only=False)
+
+    class Meta:
+        model = Patient
+        fields = ["user", "patient"]
