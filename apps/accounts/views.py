@@ -32,11 +32,11 @@ class ActivateUserView(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            user.set_password(serializer.validated_data.pop("password"))
-            user.email = serializer.validated_data.pop("email")
-            user.first_name = serializer.validated_data.pop("first_name")
-            user.last_name = serializer.validated_data.pop("last_name")
-            user.middle_name = serializer.validated_data.pop("middle_name")
+            user.set_password(serializer.validated_data.get("user").pop("password"))
+            user.email = serializer.validated_data.get("user").pop("email")
+            user.first_name = serializer.validated_data.get("user").pop("first_name")
+            user.last_name = serializer.validated_data.get("user").pop("last_name")
+            user.middle_name = serializer.validated_data.get("user").pop("middle_name")
             patient.phone_number = serializer.validated_data.pop("phone_number")
             patient.medical_card_number = serializer.validated_data.pop("medical_card_number")
             patient.insurance_policy_number = serializer.validated_data.pop("insurance_policy_number")
