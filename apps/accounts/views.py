@@ -32,9 +32,6 @@ class ActivateUserView(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            print("================================================================================")
-            print(serializer.validated_data)
-            print("================================================================================")
             user.set_password(serializer.validated_data["user"]["password"])
             user.email = serializer.validated_data["user"]["email"]
             user.first_name = serializer.validated_data["user"]["first_name"]
