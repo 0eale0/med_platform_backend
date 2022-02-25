@@ -32,25 +32,28 @@ class ActivateUserView(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            user.set_password(serializer.validated_data.get("user").pop("password"))
-            user.email = serializer.validated_data.get("user").pop("email")
-            user.first_name = serializer.validated_data.get("user").pop("first_name")
-            user.last_name = serializer.validated_data.get("user").pop("last_name")
-            user.middle_name = serializer.validated_data.get("user").pop("middle_name")
-            patient.phone_number = serializer.validated_data.pop("phone_number")
-            patient.medical_card_number = serializer.validated_data.pop("medical_card_number")
-            patient.insurance_policy_number = serializer.validated_data.pop("insurance_policy_number")
-            patient.birth_date = serializer.validated_data.pop("birth_date")
-            patient.sex = serializer.validated_data.pop("sex")
-            patient.activity_level = serializer.validated_data.pop("activity_level")
-            patient.weight = serializer.validated_data.pop("weight")
-            patient.waist = serializer.validated_data.pop("waist")
-            patient.height = serializer.validated_data.pop("height")
-            patient.hips = serializer.validated_data.pop("hips")
-            patient.medical_information = serializer.validated_data.pop("medical_information")
-            patient.country = serializer.validated_data.pop("country")
-            patient.city = serializer.validated_data.pop("city")
-            patient.address = serializer.validated_data.pop("address")
+            print("================================================================================")
+            print(serializer.validated_data)
+            print("================================================================================")
+            user.set_password(serializer.validated_data["user"]["password"])
+            user.email = serializer.validated_data["user"]["email"]
+            user.first_name = serializer.validated_data["user"]["first_name"]
+            user.last_name = serializer.validated_data["user"]["last_name"]
+            user.middle_name = serializer.validated_data["user"]["middle_name"]
+            patient.phone_number = serializer.validated_data["patient"]["phone_number"]
+            patient.medical_card_number = serializer.validated_data["patient"]["medical_card_number"]
+            patient.insurance_policy_number = serializer.validated_data["patient"]["insurance_policy_number"]
+            patient.birth_date = serializer.validated_data["patient"]["birth_date"]
+            patient.sex = serializer.validated_data["patient"]["sex"]
+            patient.activity_level = serializer.validated_data["patient"]["activity_level"]
+            patient.weight = serializer.validated_data["patient"]["weight"]
+            patient.waist = serializer.validated_data["patient"]["waist"]
+            patient.height = serializer.validated_data["patient"]["height"]
+            patient.hips = serializer.validated_data["patient"]["hips"]
+            patient.medical_information = serializer.validated_data["patient"]["medical_information"]
+            patient.country = serializer.validated_data["patient"]["country"]
+            patient.city = serializer.validated_data["patient"]["city"]
+            patient.address = serializer.validated_data["patient"]["address"]
             user.is_active = True
             patient.link_token = None
             user.save()
