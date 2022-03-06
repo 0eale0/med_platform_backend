@@ -27,6 +27,7 @@ class Dish(models.Model):
 class DayDish(models.Model):
     dish_amount = models.FloatField()
     time = models.TimeField()
+    comment = models.CharField(max_length=255, null=True, blank=True)
 
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
