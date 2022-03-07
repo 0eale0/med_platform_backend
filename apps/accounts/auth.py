@@ -59,5 +59,4 @@ class UserProfileManager(BaseUserManager):
         user.is_staff = True
 
         user.save(using=self._db)
-        send_email_activation(user)
         return user
