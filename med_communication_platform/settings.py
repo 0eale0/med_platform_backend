@@ -94,14 +94,18 @@ WSGI_APPLICATION = "med_communication_platform.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("DB_NAME", "dbname"),
-        "USER": os.environ.get("DB_USER", "dbuser"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "dbpass"),
-        "HOST": os.environ.get("DB_HOST", "dbhost"),
-        "PORT": "5432",
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Email setting
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''  # fill the username
+EMAIL_HOST_PASSWORD =   # fill the password
 
 
 # Password validation
