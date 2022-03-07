@@ -15,5 +15,5 @@ urlpatterns = [
     path(r"api/auth/token/refresh/", TokenRefreshView.as_view()),
     path(r"api/accounts/activate/", ActivateUserView.as_view()),
     path(r"api/accounts/whoami/", WhoAmIView.as_view()),
-    path(r"api/accounts/VerifyEmail/<uid_64>/<token>/", VerifyEmailView.as_view(), name="VerifyEmail")
+    path(r"api/accounts/VerifyEmail/<uid_64>/<token>/", VerifyEmailView.as_view(), name="VerifyEmail"),
 ]

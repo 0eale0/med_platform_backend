@@ -14,7 +14,6 @@ from six import text_type
 
 
 class AppTokenGenerator(PasswordResetTokenGenerator):
-
     def _make_hash_value(self, user, timestamp):
         return text_type(user.is_active) + text_type(user.pk) + text_type(timestamp)
 
@@ -27,20 +26,14 @@ def send_email_activation(request, user):
     uid_64 = urlsafe_base64_encode(force_bytes(user.pk))
     token = account_activation_token.make_token(user)
 
-    link = reverse('VerifyEmail',  kwargs={'uid_64': uid_64,
-                                           'token': token})
+    link = reverse('VerifyEmail', kwargs={'uid_64': uid_64, 'token': token})
     activate_url = 'http://' + domain + link
 
     email_subject = "Activate you're account"
     email_text = f"Please the link below to activate your account \n{activate_url}"
     user_email = user.email
 
-    email = EmailMessage(
-        email_subject,
-        email_text,
-        settings.EMAIL_HOST_USER,
-        [user_email]
-    )
+    email = EmailMessage(email_subject, email_text, settings.EMAIL_HOST_USER, [user_email])
 
     email.fail_silently = False
     email.send()
