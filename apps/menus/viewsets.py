@@ -201,6 +201,16 @@ class DayDishViewSet(viewsets.ModelViewSet):
             day_dishes_serialized.append(result)
         return Response(day_dishes_serialized)
 
+    @action(methods=['POST'], detail=False)
+    def add_comment(self, request):
+        comment = request.data["comment"]
+        day_dish = DayDish.objects.filter(id=request.data["day_dish_id"]).first()
+
+        day_dish.comment = comment
+        day_dish.save()
+
+        return Response({"status": "ok"})
+
 
 class DishIngredientViewSet(viewsets.ModelViewSet):
     serializer_class = DishIngredientSerializer
