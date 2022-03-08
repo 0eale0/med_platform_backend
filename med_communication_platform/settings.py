@@ -105,11 +105,11 @@ DATABASES = {
 
 # Email setting
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = os.environ.get("EMAIL_HOST")  # fill the host in .env file
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ''  # fill the username
-EMAIL_HOST_PASSWORD = ''  # fill the password
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # fill the username in .env file
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  # fill the password in .env file
 
 
 # Password validation
