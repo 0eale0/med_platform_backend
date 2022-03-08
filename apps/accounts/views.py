@@ -71,5 +71,5 @@ class WhoAmIView(APIView):
         user_serialized = self.serializer_class(request.user).data
         user_serialized["is_doctor"] = bool(doctor)
         user_serialized["is_patient"] = bool(patient)
-        user_serialized["patient_id"] = patient.pk
+        user_serialized["patient_id"] = patient.pk if patient else None
         return Response(user_serialized)
