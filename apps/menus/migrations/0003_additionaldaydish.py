@@ -15,8 +15,20 @@ class Migration(migrations.Migration):
             name='AdditionalDayDish',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('additional_day_dish', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='additional_day_dish', to='menus.daydish')),
-                ('main_day_dish', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='main_day_dish', to='menus.daydish')),
+                (
+                    'additional_day_dish',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='additional_day_dish',
+                        to='menus.daydish',
+                    ),
+                ),
+                (
+                    'main_day_dish',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name='main_day_dish', to='menus.daydish'
+                    ),
+                ),
             ],
         ),
     ]
