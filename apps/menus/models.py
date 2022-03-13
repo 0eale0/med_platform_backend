@@ -49,3 +49,8 @@ class DishIngredient(models.Model):
 
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+
+
+class AdditionalDayDish(models.Model):
+    main_day_dish = models.ForeignKey(DayDish, on_delete=models.CASCADE, related_name='main_day_dish')
+    additional_day_dish = models.ForeignKey(DayDish, on_delete=models.CASCADE, related_name='additional_day_dish')
