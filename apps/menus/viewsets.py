@@ -194,7 +194,7 @@ class DayDishViewSet(viewsets.ModelViewSet):
             day_dish_serializer = serializers.DayDishSerializer(day_dish).data
             additional_day_dishes = AdditionalDayDish.objects.filter(main_day_dish=day_dish)
             for additional_day_dish in additional_day_dishes:
-                additions.append(Dish.objects.filter(id=additional_day_dish).first())
+                additions.append(Dish.objects.filter(id=additional_day_dish.additional_day_dish_id).first())
             result = dict(
                 day_dish_serializer["dish"],
                 amount=day_dish_serializer["dish_amount"],
