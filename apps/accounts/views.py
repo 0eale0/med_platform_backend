@@ -1,9 +1,29 @@
+from django.http import HttpResponse
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 
 from apps.accounts.models import Patient, User, Doctor
-from apps.accounts.serializers import ActivateUserSerializer, UserSerializer, PatientForDoctorSerializer
+from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
+from apps.accounts.auth import account_activation_token, send_email_activation
+
+
+class VerifyEmailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, uid_64, token):
+        user_id = force_text(urlsafe_base64_decode(uid_64))
+        user = User.objects.get(pk=user_id)
+
+        if not account_activation_token.check_token(user, token) or user.is_active:
+            return HttpResponse("user already activated")
+
+        user.is_active = True
+        user.save()
+
+        return Response({"status": "ok"})
 
 
 class ActivateUserView(APIView):
@@ -51,10 +71,11 @@ class ActivateUserView(APIView):
             patient.country = serializer.validated_data["patient"]["country"]
             patient.city = serializer.validated_data["patient"]["city"]
             patient.address = serializer.validated_data["patient"]["address"]
-            user.is_active = True
+            user.is_active = False
             patient.link_token = None
             user.save()
             patient.save()
+            send_email_activation(request, user)
             return Response({"status": "ok"})
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
 
