@@ -179,8 +179,8 @@ class DayDishViewSet(viewsets.ModelViewSet):
         del result["day"]
         return Response(result)
 
-    @action(methods=['POST'], detail=False)
-    def day_dish_list(self, request):
+    @action(methods=['POST'], detail=True)
+    def day_dish_list(self, request, pk):
         if "patient_id" in request.data.keys():
             patient = Patient.objects.filter(id=request.data["patient_id"]).first()
         else:
@@ -194,7 +194,10 @@ class DayDishViewSet(viewsets.ModelViewSet):
             day_dish_serializer = serializers.DayDishSerializer(day_dish).data
             additional_day_dishes = AdditionalDayDish.objects.filter(main_day_dish=day_dish)
             for additional_day_dish in additional_day_dishes:
-                additions.append(Dish.objects.filter(id=additional_day_dish.additional_day_dish_id).first())
+                model_addition_dish = Dish.objects.filter(id=additional_day_dish.additional_day_dish_id).first()
+                serializer_addition_dish = serializers.DishSerializer(model_addition_dish).data
+                del serializer_addition_dish["day"]
+                additions.append(serializer_addition_dish)
             result = dict(
                 day_dish_serializer["dish"],
                 amount=day_dish_serializer["dish_amount"],
@@ -206,8 +209,8 @@ class DayDishViewSet(viewsets.ModelViewSet):
             day_dishes_serialized.append(result)
         return Response(day_dishes_serialized)
 
-    @action(methods=['POST'], detail=False)
-    def add_comment(self, request):
+    @action(methods=['POST'], detail=True)
+    def add_comment(self, request, pk):
         comment = request.data["comment"]
         day_dish = DayDish.objects.filter(id=request.data["day_dish_id"]).first()
 
