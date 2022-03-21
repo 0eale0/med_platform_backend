@@ -25,3 +25,4 @@ urlpatterns = [
 ]
 
 urlpatterns += accounts_router.urls
+urlpatterns += menus_router.urls
