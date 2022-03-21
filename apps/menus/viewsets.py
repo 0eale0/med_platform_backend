@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from apps.accounts.models import Patient
 from apps.menus import serializers
-from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
+from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient, AdditionalDayDish
 from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner
 from apps.menus.serializers import (
     MenuSerializer,
@@ -190,12 +190,22 @@ class DayDishViewSet(viewsets.ModelViewSet):
 
         day_dishes_serialized = []
         for day_dish in day_dishes:
+            additions = []
             day_dish_serializer = serializers.DayDishSerializer(day_dish).data
+            additional_day_dishes = AdditionalDayDish.objects.filter(main_day_dish=day_dish.id)
+            for additional_day_dish in additional_day_dishes:
+                model_addition_day_dish = DayDish.objects.filter(id=additional_day_dish.additional_day_dish_id).first()
+                model_addition_dish = Dish.objects.filter(id=model_addition_day_dish.dish_id).first()
+                serializer_addition_dish = serializers.DishSerializer(model_addition_dish).data
+                del serializer_addition_dish["day"]
+                serializer_addition_dish["amount"] = model_addition_day_dish.dish_amount
+                additions.append(serializer_addition_dish)
             result = dict(
                 day_dish_serializer["dish"],
                 amount=day_dish_serializer["dish_amount"],
                 time=day_dish_serializer["time"],
                 day_dish_id=day_dish_serializer["id"],
+                additionals=additions,
             )
             del result["day"]
             day_dishes_serialized.append(result)
