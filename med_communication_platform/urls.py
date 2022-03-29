@@ -21,8 +21,9 @@ from apps.menus.urls import router as menus_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # не понятно к чему тут регулярка
     path(r"", include("apps.accounts.urls")),
 ]
 
-urlpatterns += accounts_router.urls
+urlpatterns += accounts_router.urls  # одно и то же действие что и в include path
 urlpatterns += menus_router.urls

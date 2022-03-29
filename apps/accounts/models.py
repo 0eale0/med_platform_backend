@@ -52,8 +52,8 @@ class Patient(models.Model):
     address = models.CharField(max_length=60, **NULLABLE)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, **NULLABLE)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, **NULLABLE)
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, **NULLABLE)  # почему пациент не может существовать без доктора?
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)  # лишнее поле
 
     def __str__(self):
         return f"{self.user.username}"

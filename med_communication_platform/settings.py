@@ -30,6 +30,11 @@ load_dotenv(find_dotenv())
 SECRET_KEY = "django-insecure-u^2=^ousriw$1b#hclr78c8gnvcj!edb!^dmh0hlb1zu()d@dw"
 
 # SECURITY WARNING: don't run with debug turned on in production!
+"""
+должно быть переменной окружения
+сикрет ки тоже
+
+"""
 DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru"]

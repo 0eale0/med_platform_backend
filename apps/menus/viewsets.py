@@ -97,7 +97,7 @@ class DayViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=False)
     def create_day(self, request):
-        patient = Patient.objects.filter(id=request.data["patient_id"]).first()
+        patient = Patient.objects.filter(id=request.data["patient_id"]).first()  # операции с бд вне сервисов
         last_day = Day.objects.filter(menu=patient.menu).order_by('-number').first()
         day_number = last_day.number + 1 if last_day else 1
         new_day = Day.objects.create(number=day_number, menu=patient.menu)

@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Menu(models.Model):
+class Menu(models.Model):  # Лишняя модель можно будет создать просто миграцией
     pass
 
 
@@ -17,7 +17,7 @@ class Dish(models.Model):
     default_weight = models.FloatField()
     proteins = models.FloatField()
     fats = models.FloatField()
-    carbohydrates = models.FloatField()
+    carbohydrates = models.FloatField()  # эти поля используются в нескольких моделях, можно вынести в абстрактную модель
     calories = models.FloatField()
     recipe = models.TextField()
 
@@ -27,7 +27,7 @@ class Dish(models.Model):
 class DayDish(models.Model):
     dish_amount = models.FloatField()
     time = models.TimeField()
-    comment = models.CharField(max_length=255, null=True, blank=True)
+    comment = models.CharField(max_length=255, null=True, blank=True)  # комментарии лучше текстфилд сделать
 
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
@@ -36,7 +36,7 @@ class DayDish(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length=60)
     default_weight = models.FloatField()
-    proteins = models.FloatField()
+    proteins = models.FloatField()  # незаполнены параметры
     fats = models.FloatField()
     carbohydrates = models.FloatField()
     calories = models.FloatField()

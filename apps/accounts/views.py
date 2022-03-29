@@ -1,6 +1,3 @@
-from django.http import HttpResponse
-from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -33,8 +30,8 @@ class ActivateUserView(APIView):
     def get(self, request):
         token = request.query_params.get('token')
         if not token:
-            return Response({"detail": "pass token in url params"}, status=status.HTTP_404_NOT_FOUND)
-        patient = Patient.objects.filter(link_token=token).first()
+            return Response({"detail": "pass token in url params"}, status=status.HTTP_404_NOT_FOUND)  # дублир кода
+        patient = Patient.objects.filter(link_token=token).first()  # операции с бд вне сервисов
 
         if patient is None:
             return Response({"detail": "user already active or not created"}, status=status.HTTP_404_NOT_FOUND)
@@ -75,8 +72,7 @@ class ActivateUserView(APIView):
             patient.link_token = None
             user.save()
             patient.save()
-            send_email_activation(request, user)
-            return Response({"status": "ok"})
+            return Response({"status": "ok"})  # неоправданныое усложнение кода создание строк можно сократить
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -87,7 +83,7 @@ class WhoAmIView(APIView):
     def get(self, request):
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
-        doctor = Doctor.objects.filter(user=request.user).first()
+        doctor = Doctor.objects.filter(user=request.user).first()  # вне сервисов
         patient = Patient.objects.filter(user=request.user).first()
         user_serialized = self.serializer_class(request.user).data
         user_serialized["is_doctor"] = bool(doctor)

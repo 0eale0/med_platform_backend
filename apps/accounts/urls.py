@@ -11,6 +11,7 @@ router.register("api/accounts/patient/?", PatientViewForDoctor)
 
 
 urlpatterns = [
+    # регулярка без re_path
     path(r"api/auth/token/", TokenObtainPairView.as_view()),
     path(r"api/auth/token/refresh/", TokenRefreshView.as_view()),
     path(r"api/accounts/activate/", ActivateUserView.as_view()),
