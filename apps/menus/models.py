@@ -29,7 +29,7 @@ class DayDish(models.Model):
     time = models.TimeField()
     comment = models.CharField(max_length=255, null=True, blank=True)
     #если можно не создавать лишнюю модель не создавай, одно поле лучше целой модели + так намного легче обрабатывать данные
-    is_additional = models.BooleanField(default=False)
+    additional_to = models.ForeignKey('DayDish', default=None, on_delete=models.CASCADE, null=True)
 
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
