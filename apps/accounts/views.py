@@ -71,7 +71,7 @@ class ActivateUserView(APIView):
             patient.country = serializer.validated_data["patient"]["country"]
             patient.city = serializer.validated_data["patient"]["city"]
             patient.address = serializer.validated_data["patient"]["address"]
-            user.is_active = True
+            user.is_active = False
             patient.link_token = None
             user.save()
             patient.save()
