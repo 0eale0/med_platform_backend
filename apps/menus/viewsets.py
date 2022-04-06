@@ -108,7 +108,7 @@ class DayViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=False)
     def get_day(self, request):
-        # вот это условие можно вынести в функцию, а то дублирование кода получается
+        # TODO вот это условие можно вынести в функцию, а то дублирование кода получается
         if "patient_id" in request.data.keys():
             patient = Patient.objects.filter(id=request.data["patient_id"]).first()
         else:
