@@ -1,5 +1,6 @@
-from apps.accounts.models import Patient, User
 from rest_framework import serializers
+
+from apps.accounts.models import Patient, User
 
 
 class UserSerializer(serializers.ModelSerializer):

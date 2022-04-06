@@ -56,7 +56,7 @@ class DishListSerializer(serializers.ModelSerializer):
 
 
 class IngredientAndAmountSerializer(serializers.ModelSerializer):
-    #эту штуку можно было сделать и красивее, но я не придумал как
+    # эту штуку можно было сделать и красивее, но я не придумал как
     name = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField()
     amount = serializers.SerializerMethodField()
