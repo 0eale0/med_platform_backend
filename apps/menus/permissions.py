@@ -33,6 +33,16 @@ class IsDoctor(permissions.BasePermission):
             return True
 
 
+class IsPatient(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if request.user.patient:
+            return True
+
+
 class IsDayOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_anonymous:

@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only_fields = ["password"]
 
 
-class PatientForDoctorSerializer(serializers.ModelSerializer):
+class BaseForPatientSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=False)
     join_link = serializers.SerializerMethodField(read_only=True)
 
