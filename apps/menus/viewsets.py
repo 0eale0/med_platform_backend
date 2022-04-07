@@ -25,7 +25,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     @action(methods=['GET'], detail=True)
-    def day_list_1(self, request, pk=None): #для чего оно тут
+    def day_list_1(self, request, pk=None): # для чего оно тут
         patient = Patient.objects.filter(id=pk).first()
         days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
@@ -35,7 +35,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         return Response(days_serialized)
 
     @action(methods=['GET'], detail=False)
-    def day_list_2(self, request):#для чего оно тут
+    def day_list_2(self, request):# для чего оно тут
         patient = Patient.objects.filter(user=request.user).first()
         days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
@@ -61,7 +61,7 @@ class DayViewSet(viewsets.ModelViewSet):
         day = Day.objects.create(menu=menu, done=False, number=request.data["day_number"])
         day_dishes = request.data["dishes"]
 
-        #TODO добавтиь bulk_create смотри DishViewSet
+        # TODO добавтиь bulk_create смотри DishViewSet
         for day_dish in day_dishes:
             dish = Dish.objects.filter(id=day_dish["id"]).first()
             DayDish.objects.create(
@@ -80,8 +80,7 @@ class DayViewSet(viewsets.ModelViewSet):
         day = self.get_object()
         day_dishes = DayDish.objects.filter(day_id=day.id).all()
         dishes = []
-
-        #TODO переработать под many=True смотри DishViewSet
+        # TODO переработать под many=True смотри DishViewSet
         for day_dish in day_dishes:
             day_dish_serializer = serializers.DayDishSerializer(day_dish).data
             dish = dict(
@@ -125,7 +124,7 @@ class DishViewSet(viewsets.ModelViewSet):
         dish = Dish.objects.create(**request.data["dish"])
         ingredients = request.data["ingredients"]
 
-        #было очень не хорошо из-за того что мы слали много запросов к базе данных
+        # было очень не хорошо из-за того что мы слали много запросов к базе данных
         DishIngredient.objects.bulk_create(
             [DishIngredient(ingredient_amount=i["amount"], dish=dish, ingredient_id=i["id"]) for i in ingredients])
 
