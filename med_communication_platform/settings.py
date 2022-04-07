@@ -32,10 +32,10 @@ SECRET_KEY = "django-insecure-u^2=^ousriw$1b#hclr78c8gnvcj!edb!^dmh0hlb1zu()d@dw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru"]
+ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru", "django.com"]
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8080", "http://med-platform.a.uenv.ru", "http://med-plaform.a.uenv.ru"]
+CORS_ALLOWED_ORIGINS = ["http://med-platform.a.uenv.ru"]
 
 
 # Application definition
@@ -73,7 +73,7 @@ ROOT_URLCONF = "med_communication_platform.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -86,20 +86,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "med_communication_platform.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.environ.get("DB_NAME", "dbname"),
-        "USER": os.environ.get("DB_USER", "dbuser"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "dbpass"),
-        "HOST": os.environ.get("DB_HOST", "dbhost"),
-        "PORT": "5432",
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

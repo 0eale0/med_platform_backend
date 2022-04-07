@@ -17,11 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from apps.accounts.urls import router as accounts_router
 from apps.menus.urls import router as menus_router
+from views import obeme
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(r"", include("apps.accounts.urls")),
+    path("main/", obeme)
 ]
 
 urlpatterns += accounts_router.urls
