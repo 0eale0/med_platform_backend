@@ -15,8 +15,14 @@ from apps.menus.serializers import (
     DaySerializer,
     DishSerializer,
     DayDishSerializer,
-    DishIngredientSerializer, DishListSerializer, DishDetailSerializer,
+    DishIngredientSerializer, DishListSerializer, DishDetailSerializer, DayDishDetailSerializer,
 )
+
+
+def get_patient(request) -> Patient:
+    if "patient_id" in request.data.keys():
+        return Patient.objects.filter(id=request.data["patient_id"]).first()
+    return Patient.objects.filter(user=request.user).first()
 
 
 class MenuViewSet(viewsets.ModelViewSet):
@@ -25,7 +31,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     @action(methods=['GET'], detail=True)
-    def day_list_1(self, request, pk=None): # для чего оно тут
+    def day_list_1(self, request, pk=None):  # для чего оно тут
         patient = Patient.objects.filter(id=pk).first()
         days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
@@ -35,7 +41,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         return Response(days_serialized)
 
     @action(methods=['GET'], detail=False)
-    def day_list_2(self, request):# для чего оно тут
+    def day_list_2(self, request):  # для чего оно тут
         patient = Patient.objects.filter(user=request.user).first()
         days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
@@ -61,15 +67,13 @@ class DayViewSet(viewsets.ModelViewSet):
         day = Day.objects.create(menu=menu, done=False, number=request.data["day_number"])
         day_dishes = request.data["dishes"]
 
-        # TODO добавтиь bulk_create смотри DishViewSet
-        for day_dish in day_dishes:
-            dish = Dish.objects.filter(id=day_dish["id"]).first()
-            DayDish.objects.create(
-                time=day_dish["time"],
-                dish_amount=day_dish["amount"],
-                day=day,
-                dish=dish,
-            )
+        DayDish.objects.bulk_create(
+            [DayDish(time=day_dish["time"],
+                     dish_amount=day_dish["amount"],
+                     day=day,
+                     dish=Dish.objects.filter(id=day_dish["id"]).first())
+             for day_dish in day_dishes]
+        )
 
         serializer = serializers.DaySerializer(day)
         headers = self.get_success_headers(serializer.data)
@@ -77,24 +81,7 @@ class DayViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
-        day = self.get_object()
-        day_dishes = DayDish.objects.filter(day_id=day.id).all()
-        dishes = []
-        # TODO переработать под many=True смотри DishViewSet
-        for day_dish in day_dishes:
-            day_dish_serializer = serializers.DayDishSerializer(day_dish).data
-            dish = dict(
-                **day_dish_serializer["dish"],
-                time=day_dish_serializer["time"],
-                amount=day_dish_serializer["dish_amount"]
-            )
-            del dish["day"]
-            dishes.append(dish)
-
-        day_serializer = {**self.get_serializer(day).data, "dishes": dishes}
-        del day_serializer["menu"]
-
-        return Response(day_serializer)
+        return Response(DayDishDetailSerializer(self.get_object()).data)
 
     @action(methods=['POST'], detail=False)
     def create_day(self, request):
@@ -107,10 +94,7 @@ class DayViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=False)
     def get_day(self, request):
-        if "patient_id" in request.data.keys():
-            patient = Patient.objects.filter(id=request.data["patient_id"]).first()
-        else:
-            patient = Patient.objects.filter(user=request.user).first()
+        patient = get_patient(request)
         day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
         return Response(DaySerializer(day).data)
 
@@ -126,7 +110,9 @@ class DishViewSet(viewsets.ModelViewSet):
 
         # было очень не хорошо из-за того что мы слали много запросов к базе данных
         DishIngredient.objects.bulk_create(
-            [DishIngredient(ingredient_amount=i["amount"], dish=dish, ingredient_id=i["id"]) for i in ingredients])
+            [DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
+             for ingredient in ingredients]
+        )
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
@@ -164,10 +150,7 @@ class DayDishViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=False)
     def day_dish_list(self, request):
-        if "patient_id" in request.data.keys():
-            patient = Patient.objects.filter(id=request.data["patient_id"]).first()
-        else:
-            patient = Patient.objects.filter(user=request.user).first()
+        patient = get_patient(request)
 
         day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
         day_dishes = DayDish.objects.filter(day_id=day.id).all()

@@ -1,16 +1,13 @@
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from django.contrib.sites.shortcuts import get_current_site
-
+from six import text_type
 
 from med_communication_platform import settings
-
-
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from six import text_type
 
 
 class AppTokenGenerator(PasswordResetTokenGenerator):

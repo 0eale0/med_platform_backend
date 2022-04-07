@@ -1,13 +1,13 @@
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import permissions, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from apps.accounts.auth import account_activation_token, send_email_activation
 from apps.accounts.models import Patient, User, Doctor
 from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
-from apps.accounts.auth import account_activation_token, send_email_activation
 
 
 class VerifyEmailView(APIView):

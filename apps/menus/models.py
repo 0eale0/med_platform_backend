@@ -52,7 +52,7 @@ class DishIngredient(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
 
-    #без паники, тут нет лишних запросов, но лучше проверьте
+    # без паники, тут нет лишних запросов, но лучше проверьте
     @property
     def get_ingredient_name(self):
         return self.ingredient.name

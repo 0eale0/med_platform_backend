@@ -16,4 +16,4 @@ class DayInline(admin.TabularInline):
 
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
-    inlines = [DayInline,]
+    inlines = [DayInline, ]
