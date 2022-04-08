@@ -1,5 +1,6 @@
 import datetime
 
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -21,7 +22,7 @@ from apps.menus.serializers import (
 
 def get_patient(request) -> Patient:
     if "patient_id" in request.data.keys():
-        return Patient.objects.filter(id=request.data["patient_id"]).first()
+        return get_object_or_404(Patient, id=request.data["patient_id"])
     return Patient.objects.filter(user=request.user).first()
 
 
