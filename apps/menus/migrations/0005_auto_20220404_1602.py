@@ -18,6 +18,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='daydish',
             name='additional_to',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='menus.daydish'),
+            field=models.ForeignKey(
+                default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='menus.daydish'
+            ),
         ),
     ]

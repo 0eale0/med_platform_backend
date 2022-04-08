@@ -16,7 +16,10 @@ from apps.menus.serializers import (
     DaySerializer,
     DishSerializer,
     DayDishSerializer,
-    DishIngredientSerializer, DishListSerializer, DishDetailSerializer, DayDishDetailSerializer,
+    DishIngredientSerializer,
+    DishListSerializer,
+    DishDetailSerializer,
+    DayDishDetailSerializer,
 )
 
 
@@ -69,11 +72,15 @@ class DayViewSet(viewsets.ModelViewSet):
         day_dishes = request.data["dishes"]
 
         DayDish.objects.bulk_create(
-            [DayDish(time=day_dish["time"],
-                     dish_amount=day_dish["amount"],
-                     day=day,
-                     dish=Dish.objects.filter(id=day_dish["id"]).first())
-             for day_dish in day_dishes]
+            [
+                DayDish(
+                    time=day_dish["time"],
+                    dish_amount=day_dish["amount"],
+                    day=day,
+                    dish=Dish.objects.filter(id=day_dish["id"]).first(),
+                )
+                for day_dish in day_dishes
+            ]
         )
 
         serializer = serializers.DaySerializer(day)
@@ -111,8 +118,10 @@ class DishViewSet(viewsets.ModelViewSet):
 
         # было очень не хорошо из-за того что мы слали много запросов к базе данных
         DishIngredient.objects.bulk_create(
-            [DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
-             for ingredient in ingredients]
+            [
+                DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
+                for ingredient in ingredients
+            ]
         )
 
         serializer = serializers.DishSerializer(dish)
