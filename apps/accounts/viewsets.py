@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from transliterate import translit
 
 from apps.accounts.models import Patient, User
-from apps.accounts.serializers import BaseForPatientSerializer
+from apps.accounts.serializers import BaseForPatientSerializer, UserSerializer
 from apps.menus.serializers import MenuSerializer
 from apps.menus.models import Menu
 from apps.menus.permissions import IsDoctor, IsPatient
@@ -52,8 +52,7 @@ class BaseForPatientView(viewsets.ModelViewSet):
         patient_object.save()
         return Response({"error": False, "invite_link": f"{request.build_absolute_uri()}{token}"}, status=status.HTTP_201_CREATED)
 
-    @action(methods=['POST'], detail=False)
-    def retrieve(self, request):
+    def retrieve(self, request, *args, **kwargs):
         if "patient_id" in request.data.keys():
             patient_id = request.data["patient_id"]
         else:
@@ -74,23 +73,9 @@ class BaseForPatientView(viewsets.ModelViewSet):
 class PatientViewForDoctor(BaseForPatientView):
     permission_classes = [IsAuthenticated & IsDoctor]
 
-    @action(methods=['POST'], detail=False)
-    def delete(self, request):
-        if "patient_id" in request.data.keys():
-            patient_id = request.data["patient_id"]
-        else:
-            patient_id = request.user
-
-        patient = Patient.objects.filter(user=patient_id).first()
-        menu = Menu.objects.filter(user=request.user).first()
-
-        patient.delete()
-        menu.delete()
-
-        return Response(status=status.HTTP_200_OK)
-
-
-
 
 class ForPatientView(BaseForPatientView):
     permission_classes = [IsAuthenticated & IsPatient]
+
+    def destroy(self, request, *args, **kwargs):
+        pass
