@@ -50,7 +50,9 @@ class BaseForPatientView(viewsets.ModelViewSet):
         menu.save()
         patient_object.menu = menu
         patient_object.save()
-        return Response({"error": False, "invite_link": f"{request.build_absolute_uri()}{token}"}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"error": False, "invite_link": f"{request.build_absolute_uri()}{token}"}, status=status.HTTP_201_CREATED
+        )
 
     def retrieve(self, request, *args, **kwargs):
         if "patient_id" in request.data.keys():
@@ -64,8 +66,7 @@ class BaseForPatientView(viewsets.ModelViewSet):
         serialized_patient = self.serializer_class(patient).data
         serialized_menu = MenuSerializer(menu).data
 
-        result = {'patient': serialized_patient,
-                  'menu': serialized_menu}
+        result = {'patient': serialized_patient, 'menu': serialized_menu}
 
         return Response(result)
 
