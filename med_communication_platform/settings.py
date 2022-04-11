@@ -35,7 +35,12 @@ DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru", '172.18.0.1']
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8080", "http://med-platform.a.uenv.ru", "http://med-plaform.a.uenv.ru", "http://172.18.0.1:5000"]
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8080",
+    "http://med-platform.a.uenv.ru",
+    "http://med-plaform.a.uenv.ru",
+    "http://172.18.0.1:5000",
+]
 
 # Application definition
 

@@ -1,5 +1,6 @@
 import datetime
 
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -15,13 +16,16 @@ from apps.menus.serializers import (
     DaySerializer,
     DishSerializer,
     DayDishSerializer,
-    DishIngredientSerializer, DishListSerializer, DishDetailSerializer, DayDishDetailSerializer,
+    DishIngredientSerializer,
+    DishListSerializer,
+    DishDetailSerializer,
+    DayDishDetailSerializer,
 )
 
 
 def get_patient(request) -> Patient:
     if "patient_id" in request.data.keys():
-        return Patient.objects.filter(id=request.data["patient_id"]).first()
+        return get_object_or_404(Patient, id=request.data["patient_id"])
     return Patient.objects.filter(user=request.user).first()
 
 
@@ -68,11 +72,15 @@ class DayViewSet(viewsets.ModelViewSet):
         day_dishes = request.data["dishes"]
 
         DayDish.objects.bulk_create(
-            [DayDish(time=day_dish["time"],
-                     dish_amount=day_dish["amount"],
-                     day=day,
-                     dish=Dish.objects.filter(id=day_dish["id"]).first())
-             for day_dish in day_dishes]
+            [
+                DayDish(
+                    time=day_dish["time"],
+                    dish_amount=day_dish["amount"],
+                    day=day,
+                    dish=Dish.objects.filter(id=day_dish["id"]).first(),
+                )
+                for day_dish in day_dishes
+            ]
         )
 
         serializer = serializers.DaySerializer(day)
@@ -110,8 +118,10 @@ class DishViewSet(viewsets.ModelViewSet):
 
         # было очень не хорошо из-за того что мы слали много запросов к базе данных
         DishIngredient.objects.bulk_create(
-            [DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
-             for ingredient in ingredients]
+            [
+                DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
+                for ingredient in ingredients
+            ]
         )
 
         serializer = serializers.DishSerializer(dish)
