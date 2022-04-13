@@ -30,7 +30,7 @@ schema_view = get_schema_view(
         license=openapi.License(name="BSD License"),
     ),
     public=True,
-    permission_classes=[permissions.AllowAny],
+    permission_classes=(permissions.AllowAny,),
 )
 
 
@@ -38,6 +38,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path(r"", include("apps.accounts.urls")),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
 urlpatterns += accounts_router.urls
