@@ -116,7 +116,6 @@ class DishViewSet(viewsets.ModelViewSet):
         dish = Dish.objects.create(**request.data["dish"])
         ingredients = request.data["ingredients"]
 
-        # было очень не хорошо из-за того что мы слали много запросов к базе данных
         DishIngredient.objects.bulk_create(
             [
                 DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
@@ -164,8 +163,6 @@ class DayDishViewSet(viewsets.ModelViewSet):
 
         day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
         day_dishes = DayDish.objects.filter(day_id=day.id).all()
-        # есть такая фишка, когда вместо for можно написать many=True делает одно и то же но выглядит намного приятнее
-        # да и в целом по понятиям делать через many
         return Response(DishListSerializer(day_dishes, many=True).data)
 
     @action(methods=['POST'], detail=False)

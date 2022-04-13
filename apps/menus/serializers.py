@@ -56,7 +56,6 @@ class DishListSerializer(serializers.ModelSerializer):
 
 
 class IngredientAndAmountSerializer(serializers.ModelSerializer):
-    # эту штуку можно было сделать и красивее, но я не придумал как
     name = serializers.SerializerMethodField()
     id = serializers.SerializerMethodField()
     amount = serializers.SerializerMethodField()
@@ -80,7 +79,6 @@ class IngredientAndAmountSerializer(serializers.ModelSerializer):
 
 
 class DishDetailSerializer(serializers.ModelSerializer):
-    # можно и нужно логику перенести сюда,
     ingredients = serializers.SerializerMethodField()
 
     def get_ingredients(self, obj):
