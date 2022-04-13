@@ -14,6 +14,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='daydish',
             name='additional_to',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='menus.daydish'),
+            field=models.ForeignKey(
+                blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='menus.daydish'
+            ),
         ),
     ]
