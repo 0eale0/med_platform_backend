@@ -49,6 +49,10 @@ class DishIngredientSerializer(serializers.ModelSerializer):
 
 class DishListSerializer(serializers.ModelSerializer):
     dish = DishSerializer()
+    additional = serializers.SerializerMethodField()
+
+    def get_additional(self, obj):
+        return DayDishSerializer(DayDish.objects.filter(additional_to=obj).all(), many=True).data
 
     class Meta:
         model = DayDish

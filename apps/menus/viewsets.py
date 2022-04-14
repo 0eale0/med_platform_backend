@@ -162,7 +162,7 @@ class DayDishViewSet(viewsets.ModelViewSet):
         patient = get_patient(request)
 
         day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
-        day_dishes = DayDish.objects.filter(day_id=day.id).all()
+        day_dishes = DayDish.objects.filter(day_id=day.id, additional_to=None).all()
         return Response(DishListSerializer(day_dishes, many=True).data)
 
     @action(methods=['POST'], detail=False)

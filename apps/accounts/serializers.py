@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PatientForDoctorSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     user = UserSerializer(read_only=False)
     join_link = serializers.SerializerMethodField(read_only=True)
 

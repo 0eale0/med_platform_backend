@@ -28,7 +28,7 @@ class DayDish(models.Model):
     dish_amount = models.FloatField()
     time = models.TimeField()
     comment = models.CharField(max_length=255, null=True, blank=True)
-    # если можно не создавать лишнюю модель не создавай, одно поле лучше целой модели + так намного легче обрабатывать данные
+
     additional_to = models.ForeignKey('DayDish', default=None, on_delete=models.CASCADE, blank=True, null=True)
 
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
