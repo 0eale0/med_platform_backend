@@ -141,7 +141,7 @@ class DayDishViewSet(viewsets.ModelViewSet):
         hours, minutes, *_ = list(map(int, request.data["time"].split(":")))
         day_dish = DayDish.objects.create(
             dish_amount=request.data["dish_amount"],
-            additional_to=request.data["additional_to"],
+            additional_to_id=request.data.get("additional_to"),
             time=datetime.time(hour=hours, minute=minutes),
             day=Day.objects.filter(id=int(request.data["day_id"])).first(),
             dish=Dish.objects.filter(id=int(request.data["dish_id"])).first(),
