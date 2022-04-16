@@ -117,5 +117,5 @@ class DoctorViewSet(viewsets.ModelViewSet):
         return Response({'contact_details': doctor.contact_details})
 
     def retrieve(self, request, *args, **kwargs):
-        doctor = get_object_or_404(Doctor, id=request.data["doctor_id"])
+        doctor = get_object_or_404(Doctor, id=kwargs["pk"])
         return Response(DoctorSerializer(doctor).data)
