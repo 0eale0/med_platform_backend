@@ -1,4 +1,4 @@
-from apps.accounts.models import Patient, User
+from apps.accounts.models import Patient, User, Doctor
 from rest_framework import serializers
 
 
@@ -35,3 +35,16 @@ class ActivateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = ["user", "patient"]
+
+
+class DoctorSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        result = UserSerializer(User.objects.filter(id=obj.user.id).first()).data
+        del result['password']
+        return result
+
+    class Meta:
+        model = Doctor
+        fields = ['user', 'post', 'contact_details']

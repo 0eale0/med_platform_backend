@@ -3,11 +3,12 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from apps.accounts.views import ActivateUserView, WhoAmIView, VerifyEmailView
-from apps.accounts.viewsets import PatientViewForDoctor
+from apps.accounts.viewsets import PatientViewForDoctor, DoctorViewSet
 
 router = routers.SimpleRouter()
 
 router.register("api/accounts/patient/?", PatientViewForDoctor)
+router.register("api/accounts/doctor/?", DoctorViewSet)
 
 
 urlpatterns = [

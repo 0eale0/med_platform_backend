@@ -27,6 +27,7 @@ class User(AbstractUser):
 class Doctor(models.Model):
     phone_number = models.CharField(max_length=100)
     post = models.CharField(max_length=100)
+    contact_details = models.CharField(max_length=100, **NULLABLE)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
