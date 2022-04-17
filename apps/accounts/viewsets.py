@@ -56,7 +56,7 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         user = serializer.validated_data.pop("user")
         patient_obj = get_object_or_404(Patient, id=serializer.validated_data.pop("id"))
         user_obj = get_object_or_404(User, id=patient_obj.user.id)
-        user_obj.first_name = user["first_name"]# TODO fix this shit
+        user_obj.first_name = user["first_name"]  # TODO fix this shit
         user_obj.last_name = user["last_name"]
         user_obj.middle_name = user["middle_name"]
         user_obj.save()
