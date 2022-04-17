@@ -56,6 +56,7 @@ class ActivateUserView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user.set_password(serializer.validated_data["user"]["password"])
+            user.save()
             User.objects.filter(id=user.id).update(**serializer.validated_data["user"], is_active=False)
             Patient.objects.filter(id=patient.id).update(**serializer.validated_data["patient"], link_token=None)
             send_email_activation(request, user)
