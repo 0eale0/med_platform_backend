@@ -1,5 +1,6 @@
-from apps.accounts.models import Patient, User
 from rest_framework import serializers
+
+from apps.accounts.models import Patient, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PatientForDoctorSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     user = UserSerializer(read_only=False)
     join_link = serializers.SerializerMethodField(read_only=True)
 

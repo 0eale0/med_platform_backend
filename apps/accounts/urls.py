@@ -9,7 +9,6 @@ router = routers.SimpleRouter()
 
 router.register("api/accounts/patient/?", PatientViewForDoctor)
 
-
 urlpatterns = [
     path(r"api/auth/token/", TokenObtainPairView.as_view()),
     path(r"api/auth/token/refresh/", TokenRefreshView.as_view()),
