@@ -36,7 +36,7 @@ class IsDoctor(permissions.BasePermission):
 
 class IsPatient(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS and request.user.patient == obj:
+        if request.user.patient == obj:
             return True
 
 
