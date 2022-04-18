@@ -34,6 +34,7 @@ def send_email_activation(request, user):
 
     email.fail_silently = False
     email.send()
+    return activate_url
 
 
 class UserProfileManager(BaseUserManager):
