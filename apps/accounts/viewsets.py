@@ -95,9 +95,3 @@ class ForPatientView(BaseForPatientView):
 
     def create(self, request, *args, **kwargs):
         return Response({"error": True, "status": 403})
-
-    def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        super().retrieve(request, *args, **kwargs)
