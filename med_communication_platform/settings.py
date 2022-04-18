@@ -193,3 +193,14 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(days=365),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=365),
 }
+
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://4b33dc6541534bce95d441de2adcb6b4@o1209303.ingest.sentry.io/6342873",
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
