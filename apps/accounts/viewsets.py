@@ -12,7 +12,7 @@ from apps.accounts.models import Patient, User
 from apps.accounts.serializers import BaseForPatientSerializer, UserSerializer
 from apps.menus.serializers import MenuSerializer
 from apps.menus.models import Menu
-from apps.menus.permissions import IsDoctor, CheckUser
+from apps.menus.permissions import IsDoctor, IsPatient
 
 
 class BaseForPatientView(viewsets.ModelViewSet):
@@ -88,7 +88,7 @@ class PatientViewForDoctor(BaseForPatientView):
 
 
 class ForPatientView(BaseForPatientView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & IsPatient]
 
     def destroy(self, request, *args, **kwargs):
         return Response({"error": True, "status": 403})
@@ -96,10 +96,8 @@ class ForPatientView(BaseForPatientView):
     def create(self, request, *args, **kwargs):
         return Response({"error": True, "status": 403})
 
-    @CheckUser
     def update(self, request, *args, **kwargs):
         super().update(request, *args, **kwargs)
 
-    @CheckUser
     def retrieve(self, request, *args, **kwargs):
         super().retrieve(request, *args, **kwargs)

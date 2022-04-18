@@ -34,24 +34,10 @@ class IsDoctor(permissions.BasePermission):
             return True
 
 
-class CheckUser:
-    def __init__(self, func):
-        self.func = func
-
-    def __call__(self, request, *args, **kwargs):
-        data = request.data
-
-        if "user" in data.keys():
-            user_from_data = data["user"]
-        else:
-            return Response({"error": "user_id not in request.data", "status": 400})
-
-        user_id_from = request.user
-
-        if user_id_from != user_from_data:
-            return Response({"error": True, "status": 403})
-
-        self.func(request, *args, **kwargs)
+class IsPatient(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS and request.user.patient == obj:
+            return True
 
 
 class IsDayOwner(permissions.BasePermission):
