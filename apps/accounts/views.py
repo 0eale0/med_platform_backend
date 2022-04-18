@@ -59,6 +59,7 @@ class ActivateUserView(APIView):
             user.save()
             User.objects.filter(id=user.id).update(**serializer.validated_data["user"], is_active=False)
             Patient.objects.filter(id=patient.id).update(**serializer.validated_data["patient"], link_token=None)
+            user.refresh_from_db()
             activate_url = send_email_activation(request, user)
             return Response({"status": f"ok {activate_url}"})
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
