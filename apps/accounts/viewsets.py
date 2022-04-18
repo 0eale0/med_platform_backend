@@ -12,7 +12,7 @@ from apps.accounts.models import Patient, User, Doctor
 from apps.accounts.serializers import BaseForPatientSerializer, UserSerializer, DoctorSerializer
 from apps.menus.serializers import MenuSerializer
 from apps.menus.models import Menu
-from apps.menus.permissions import IsDoctor, CheckUser
+from apps.menus.permissions import IsDoctor, CheckUser, IsPersonalCabinetOwner
 
 
 class BaseForPatientView(viewsets.ModelViewSet):
@@ -108,9 +108,9 @@ class ForPatientView(BaseForPatientView):
 class DoctorViewSet(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
-    permissions = [IsDoctor]
+    permissions = [IsPersonalCabinetOwner]
 
-    def create(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         doctor = get_object_or_404(Doctor, user_id=request.user.id)
         doctor.contact_details = request.data["contact_details"]
         doctor.save()

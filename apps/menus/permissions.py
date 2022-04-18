@@ -69,3 +69,12 @@ class IsDayOwner(permissions.BasePermission):
         if patient.menu == obj.day.menu:
             return True
         return False
+
+
+class IsPersonalCabinetOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if request.user.doctor and obj.user_id == request.user.id:
+            return True
