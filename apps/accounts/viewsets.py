@@ -2,7 +2,7 @@ import random
 import string
 from uuid import uuid4
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -62,3 +62,9 @@ class PatientViewForDoctor(viewsets.ModelViewSet):
         user_obj.save()
         serializer.update(instance=patient_obj, validated_data=serializer.validated_data)
         return Response({"error": False, "status": 200})
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.user.delete()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
