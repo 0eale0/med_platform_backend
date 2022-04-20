@@ -31,7 +31,7 @@ SECRET_KEY = "django-insecure-u^2=^ousriw$1b#hclr78c8gnvcj!edb!^dmh0hlb1zu()d@dw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru", '172.18.0.1']
+ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru", '172.18.0.1', 'localhost']
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOWED_ORIGINS = [
@@ -39,6 +39,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://med-platform.a.uenv.ru",
     "http://med-plaform.a.uenv.ru",
     "http://172.18.0.1:5000",
+    "http://localhost:3000"
 ]
 # Application definition
 
@@ -105,6 +106,15 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+
+BROKER_URL = os.environ.get("REDIS_URL", "redis")
+CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis")
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Russia/Moscow'
+
 
 # Email setting
 EMAIL_HOST = os.environ.get("EMAIL_HOST")  # fill the host in .env file
