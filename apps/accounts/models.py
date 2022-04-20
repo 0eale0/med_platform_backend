@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.auth import UserProfileManager
 from apps.menus.models import Menu
+from utils.functions import calculate_cpfc
 
 NULLABLE = {"null": True, "blank": True}
 
@@ -50,10 +51,15 @@ class Patient(models.Model):
     country = models.CharField(max_length=60, **NULLABLE)
     city = models.CharField(max_length=60, **NULLABLE)
     address = models.CharField(max_length=60, **NULLABLE)
+    cpfc = models.FloatField(**NULLABLE)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, **NULLABLE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, **NULLABLE)
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
+
+    def save(self, **kwargs):
+        self.cpfc = calculate_cpfc(self.height, self.weight, self.activity_level, self.birth_date, self.sex)
+        super(Patient, self).save()
 
     def __str__(self):
         return f"{self.user.username}"
