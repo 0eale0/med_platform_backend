@@ -70,7 +70,9 @@ class ActivateUserView(APIView):
 
 
 class WhoAmIView(APIView):
-    permission_classes = [permissions.AllowAny, ]
+    permission_classes = [
+        permissions.AllowAny,
+    ]
     serializer_class = UserSerializer
 
     def get(self, request):

@@ -39,7 +39,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://med-platform.a.uenv.ru",
     "http://med-plaform.a.uenv.ru",
     "http://172.18.0.1:5000",
-    "http://localhost:3000"
+    "http://localhost:3000",
 ]
 # Application definition
 
