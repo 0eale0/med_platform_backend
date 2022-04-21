@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.response import Response
 
 from apps.accounts.models import Patient
 
@@ -30,6 +31,12 @@ class IsDoctor(permissions.BasePermission):
             return True
 
         if request.user.doctor:
+            return True
+
+
+class IsPatient(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.patient == obj:
             return True
 
 
