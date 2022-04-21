@@ -60,7 +60,7 @@ class BaseForPatientView(viewsets.ModelViewSet):
             patient_id = request.user
 
         patient = Patient.objects.filter(user=patient_id).first()
-        menu = Menu.objects.filter(user=patient_id).first()
+        menu = Menu.objects.filter(patient=patient_id).first()
 
         serialized_patient = self.serializer_class(patient).data
         serialized_menu = MenuSerializer(menu).data
