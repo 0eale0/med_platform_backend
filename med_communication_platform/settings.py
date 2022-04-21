@@ -9,9 +9,9 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -22,7 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Loading environment variables
 load_dotenv(find_dotenv())
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -32,12 +31,16 @@ SECRET_KEY = "django-insecure-u^2=^ousriw$1b#hclr78c8gnvcj!edb!^dmh0hlb1zu()d@dw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru"]
+ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru", '172.18.0.1', 'localhost']
 
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:8080", "http://med-platform.a.uenv.ru", "http://med-plaform.a.uenv.ru"]
-
-
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8080",
+    "http://med-platform.a.uenv.ru",
+    "http://med-plaform.a.uenv.ru",
+    "http://172.18.0.1:5000",
+    "http://localhost:3000",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,6 +54,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "rest_framework_simplejwt",
+    # "django.contrib.staticfiles",
+    "drf_yasg",
     # Custom apps
     "apps.accounts",
     "apps.menus",
@@ -88,7 +93,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "med_communication_platform.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -103,14 +107,23 @@ DATABASES = {
     }
 }
 
+
+BROKER_URL = os.environ.get("REDIS_URL", "redis")
+CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis")
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Russia/Moscow'
+
+
 # Email setting
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get("EMAIL_HOST")  # fill the host in .env file
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # fill the username in .env file
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")  # fill the password in .env file
-
+SERVER_EMAIL = os.environ.get("SERVER_EMAIL")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -130,7 +143,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -144,7 +156,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -157,7 +168,6 @@ STATIC_ROOT = "static"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
-
 
 # Django rest
 
@@ -193,3 +203,14 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(days=365),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=365),
 }
+
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://4b33dc6541534bce95d441de2adcb6b4@o1209303.ingest.sentry.io/6342873",
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+)

@@ -29,6 +29,8 @@ class DayDish(models.Model):
     time = models.TimeField()
     comment = models.CharField(max_length=255, null=True, blank=True)
 
+    additional_to = models.ForeignKey('DayDish', default=None, on_delete=models.CASCADE, blank=True, null=True)
+
     day = models.ForeignKey(Day, on_delete=models.CASCADE)
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
 
@@ -50,7 +52,15 @@ class DishIngredient(models.Model):
     dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
 
+    # без паники, тут нет лишних запросов, но лучше проверьте
+    @property
+    def get_ingredient_name(self):
+        return self.ingredient.name
 
-class AdditionalDayDish(models.Model):
-    main_day_dish = models.ForeignKey(DayDish, on_delete=models.CASCADE, related_name='main_day_dish')
-    additional_day_dish = models.ForeignKey(DayDish, on_delete=models.CASCADE, related_name='additional_day_dish')
+    @property
+    def get_ingredient_id(self):
+        return self.ingredient.name
+
+    @property
+    def get_ingredient_default_weight(self):
+        return self.ingredient.default_weight

@@ -1,13 +1,14 @@
 import datetime
 
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from apps.accounts.models import Patient
 from apps.menus import serializers
-from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient, AdditionalDayDish
+from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
 from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner
 from apps.menus.serializers import (
     MenuSerializer,
@@ -16,7 +17,16 @@ from apps.menus.serializers import (
     DishSerializer,
     DayDishSerializer,
     DishIngredientSerializer,
+    DishListSerializer,
+    DishDetailSerializer,
+    DayDishDetailSerializer,
 )
+
+
+def get_patient(request) -> Patient:
+    if "patient_id" in request.data.keys():
+        return get_object_or_404(Patient, id=request.data["patient_id"])
+    return Patient.objects.filter(user=request.user).first()
 
 
 class MenuViewSet(viewsets.ModelViewSet):
@@ -25,7 +35,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     @action(methods=['GET'], detail=True)
-    def day_list_1(self, request, pk=None):
+    def day_list_1(self, request, pk=None):  # для чего оно тут
         patient = Patient.objects.filter(id=pk).first()
         days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
@@ -35,7 +45,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         return Response(days_serialized)
 
     @action(methods=['GET'], detail=False)
-    def day_list_2(self, request):
+    def day_list_2(self, request):  # для чего оно тут
         patient = Patient.objects.filter(user=request.user).first()
         days = Day.objects.filter(menu=patient.menu).all()
         days_serialized = []
@@ -61,14 +71,17 @@ class DayViewSet(viewsets.ModelViewSet):
         day = Day.objects.create(menu=menu, done=False, number=request.data["day_number"])
         day_dishes = request.data["dishes"]
 
-        for day_dish in day_dishes:
-            dish = Dish.objects.filter(id=day_dish["id"]).first()
-            DayDish.objects.create(
-                time=day_dish["time"],
-                dish_amount=day_dish["amount"],
-                day=day,
-                dish=dish,
-            )
+        DayDish.objects.bulk_create(
+            [
+                DayDish(
+                    time=day_dish["time"],
+                    dish_amount=day_dish["amount"],
+                    day=day,
+                    dish=Dish.objects.filter(id=day_dish["id"]).first(),
+                )
+                for day_dish in day_dishes
+            ]
+        )
 
         serializer = serializers.DaySerializer(day)
         headers = self.get_success_headers(serializer.data)
@@ -76,24 +89,7 @@ class DayViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
-        day = self.get_object()
-        day_dishes = DayDish.objects.filter(day_id=day.id).all()
-        dishes = []
-
-        for day_dish in day_dishes:
-            day_dish_serializer = serializers.DayDishSerializer(day_dish).data
-            dish = dict(
-                **day_dish_serializer["dish"],
-                time=day_dish_serializer["time"],
-                amount=day_dish_serializer["dish_amount"]
-            )
-            del dish["day"]
-            dishes.append(dish)
-
-        day_serializer = {**self.get_serializer(day).data, "dishes": dishes}
-        del day_serializer["menu"]
-
-        return Response(day_serializer)
+        return Response(DayDishDetailSerializer(self.get_object()).data)
 
     @action(methods=['POST'], detail=False)
     def create_day(self, request):
@@ -106,10 +102,7 @@ class DayViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=False)
     def get_day(self, request):
-        if "patient_id" in request.data.keys():
-            patient = Patient.objects.filter(id=request.data["patient_id"]).first()
-        else:
-            patient = Patient.objects.filter(user=request.user).first()
+        patient = get_patient(request)
         day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
         return Response(DaySerializer(day).data)
 
@@ -123,13 +116,12 @@ class DishViewSet(viewsets.ModelViewSet):
         dish = Dish.objects.create(**request.data["dish"])
         ingredients = request.data["ingredients"]
 
-        for ingredient in ingredients:
-            class_ingredient = Ingredient.objects.filter(id=ingredient["id"]).first()
-            DishIngredient.objects.create(
-                ingredient_amount=ingredient["amount"],
-                dish=dish,
-                ingredient=class_ingredient,
-            )
+        DishIngredient.objects.bulk_create(
+            [
+                DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
+                for ingredient in ingredients
+            ]
+        )
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
@@ -137,33 +129,19 @@ class DishViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
-        dish = self.get_object()
-        dish_ingredients = DishIngredient.objects.filter(dish_id=dish.id).all()
-        ingredients = []
-
-        for dish_ingredient in dish_ingredients:
-            dish_ingredient_serializer = serializers.DishIngredientSerializer(dish_ingredient).data
-            ingredient = dict(
-                **dish_ingredient_serializer["ingredient"], amount=dish_ingredient_serializer["ingredient_amount"]
-            )
-            del ingredient["dish"]
-            ingredients.append(ingredient)
-
-        dish_serializer = {**self.get_serializer(dish).data, "ingredients": ingredients}
-        del dish_serializer["day"]
-
-        return Response(dish_serializer)
+        return Response(DishDetailSerializer(self.get_object()).data)
 
 
 class DayDishViewSet(viewsets.ModelViewSet):
     serializer_class = DayDishSerializer
     queryset = DayDish.objects.all()
-    permission_classes = [IsDoctor | IsDayOwner]  # TODO: Set IsDoctor or IsDayOwner
+    permission_classes = [IsDoctor | IsDayOwner]
 
     def create(self, request, *args, **kwargs):
         hours, minutes, *_ = list(map(int, request.data["time"].split(":")))
         day_dish = DayDish.objects.create(
             dish_amount=request.data["dish_amount"],
+            additional_to_id=request.data.get("additional_to"),
             time=datetime.time(hour=hours, minute=minutes),
             day=Day.objects.filter(id=int(request.data["day_id"])).first(),
             dish=Dish.objects.filter(id=int(request.data["dish_id"])).first(),
@@ -181,35 +159,11 @@ class DayDishViewSet(viewsets.ModelViewSet):
 
     @action(methods=['POST'], detail=False)
     def day_dish_list(self, request):
-        if "patient_id" in request.data.keys():
-            patient = Patient.objects.filter(id=request.data["patient_id"]).first()
-        else:
-            patient = Patient.objects.filter(user=request.user).first()
-        day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
-        day_dishes = DayDish.objects.filter(day_id=day.id)
+        patient = get_patient(request)
 
-        day_dishes_serialized = []
-        for day_dish in day_dishes:
-            additions = []
-            day_dish_serializer = serializers.DayDishSerializer(day_dish).data
-            additional_day_dishes = AdditionalDayDish.objects.filter(main_day_dish=day_dish.id)
-            for additional_day_dish in additional_day_dishes:
-                model_addition_day_dish = DayDish.objects.filter(id=additional_day_dish.additional_day_dish_id).first()
-                model_addition_dish = Dish.objects.filter(id=model_addition_day_dish.dish_id).first()
-                serializer_addition_dish = serializers.DishSerializer(model_addition_dish).data
-                del serializer_addition_dish["day"]
-                serializer_addition_dish["amount"] = model_addition_day_dish.dish_amount
-                additions.append(serializer_addition_dish)
-            result = dict(
-                day_dish_serializer["dish"],
-                amount=day_dish_serializer["dish_amount"],
-                time=day_dish_serializer["time"],
-                day_dish_id=day_dish_serializer["id"],
-                additionals=additions,
-            )
-            del result["day"]
-            day_dishes_serialized.append(result)
-        return Response(day_dishes_serialized)
+        day = Day.objects.filter(number=request.data["day_number"], menu=patient.menu).first()
+        day_dishes = DayDish.objects.filter(day_id=day.id, additional_to=None).all()
+        return Response(DishListSerializer(day_dishes, many=True).data)
 
     @action(methods=['POST'], detail=False)
     def add_comment(self, request):

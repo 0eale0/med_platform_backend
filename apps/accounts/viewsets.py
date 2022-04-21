@@ -73,18 +73,24 @@ class BaseForPatientView(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data.pop("user")
-        user_obj = get_object_or_404(User, id=user.get("id"))
-        user_obj.first_name = user["first_name"]
+        patient_obj = get_object_or_404(Patient, id=serializer.validated_data.pop("id"))
+        user_obj = get_object_or_404(User, id=patient_obj.user.id)
+        user_obj.first_name = user["first_name"]  # TODO fix this shit
         user_obj.last_name = user["last_name"]
         user_obj.middle_name = user["middle_name"]
         user_obj.save()
-        patient_obj = get_object_or_404(Patient, id=serializer.validated_data.get("id"))
         serializer.update(instance=patient_obj, validated_data=serializer.validated_data)
         return Response({"error": False, "status": 200})
 
 
 class PatientViewForDoctor(BaseForPatientView):
     permission_classes = [IsAuthenticated & IsDoctor]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.user.delete()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ForPatientView(BaseForPatientView):
