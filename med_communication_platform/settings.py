@@ -99,12 +99,7 @@ WSGI_APPLICATION = "med_communication_platform.wsgi.application"
 
 
 if 'test' in sys.argv:
-    DATABASES = {
-        "default": {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'mydatabase'
-        }
-    }
+    DATABASES = {"default": {'ENGINE': 'django.db.backends.sqlite3', 'NAME': 'mydatabase'}}
 else:
     DATABASES = {
         "default": {
