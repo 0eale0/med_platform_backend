@@ -53,22 +53,6 @@ class BaseForPatientView(viewsets.ModelViewSet):
             {"error": False, "invite_link": f"{request.build_absolute_uri()}{token}"}, status=status.HTTP_201_CREATED
         )
 
-    def retrieve(self, request, *args, **kwargs):
-        if "patient_id" in request.data.keys():
-            patient_id = request.data["patient_id"]
-        else:
-            patient_id = request.user
-
-        patient = Patient.objects.filter(user=patient_id).first()
-        menu = Menu.objects.filter(patient=patient_id).first()
-
-        serialized_patient = self.serializer_class(patient).data
-        serialized_menu = MenuSerializer(menu).data
-
-        result = {'patient': serialized_patient, 'menu': serialized_menu}
-
-        return Response(result)
-
     def update(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
