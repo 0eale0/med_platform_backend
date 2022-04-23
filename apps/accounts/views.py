@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from apps.accounts.models import Patient, User, Doctor
 from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
 from apps.accounts.tasks import send_email_activation, test
+from apps.accounts.utils import get_dict_with_changes
+from apps.menus.permissions import IsDoctor, IsPatient
 
 
 class VerifyEmailView(APIView):
@@ -86,3 +88,31 @@ class WhoAmIView(APIView):
         user_serialized["is_patient"] = bool(patient)
         user_serialized["patient_id"] = patient.pk if patient else None
         return Response(user_serialized)
+
+
+class ObjectHistory(APIView):
+    permission_classes = [
+        IsDoctor & IsPatient
+    ]
+
+    allowed_models_for_history = {"patient": Patient}
+
+    def get(self, request, model, pk):
+
+        if request.user.is_anonymous:
+            return Response({"error": "login to view info"})
+
+        doctor = Doctor.objects.filter(user=request.user).first()
+
+        doctor = True
+
+        if doctor:
+            model_class = self.allowed_models_for_history[model]
+            object_to_check_history = model_class.objects.filter(user=pk).first()
+        else:
+            object_to_check_history = Patient.objects.filter(user=request.user).first()
+
+        dict_with_changes = get_dict_with_changes(object_to_check_history, 4)
+
+        return Response(dict_with_changes)
+
