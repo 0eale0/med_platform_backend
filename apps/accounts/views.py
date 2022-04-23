@@ -91,9 +91,7 @@ class WhoAmIView(APIView):
 
 
 class ObjectHistory(APIView):
-    permission_classes = [
-        IsDoctor & IsPatient
-    ]
+    permission_classes = [IsDoctor & IsPatient]
 
     allowed_models_for_history = {"patient": Patient}
 
@@ -115,4 +113,3 @@ class ObjectHistory(APIView):
         dict_with_changes = get_dict_with_changes(object_to_check_history, 4)
 
         return Response(dict_with_changes)
-
