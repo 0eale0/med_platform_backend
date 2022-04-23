@@ -94,22 +94,25 @@ class ObjectHistory(APIView):
     permission_classes = [IsDoctor & IsPatient]
 
     allowed_models_for_history = {"patient": Patient}
+    MAX_COUNT_TO_RETURN = 5
 
     def get(self, request, model, pk):
 
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
 
+        if model not in self.allowed_models_for_history.keys():
+            return Response({"status": "not ok", "error": "this model does not history"},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        model_class = self.allowed_models_for_history[model]
         doctor = Doctor.objects.filter(user=request.user).first()
 
-        doctor = True
-
         if doctor:
-            model_class = self.allowed_models_for_history[model]
             object_to_check_history = model_class.objects.filter(user=pk).first()
         else:
             object_to_check_history = Patient.objects.filter(user=request.user).first()
 
-        dict_with_changes = get_dict_with_changes(object_to_check_history, 4)
+        dict_with_changes = get_dict_with_changes(object_to_check_history, self.MAX_COUNT_TO_RETURN)
 
         return Response(dict_with_changes)
