@@ -102,8 +102,9 @@ class ObjectHistory(APIView):
             return Response({"error": "login to view info"})
 
         if model not in self.allowed_models_for_history.keys():
-            return Response({"status": "not ok", "error": "this model does not history"},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "not ok", "error": "this model does not history"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         model_class = self.allowed_models_for_history[model]
         doctor = Doctor.objects.filter(user=request.user).first()
