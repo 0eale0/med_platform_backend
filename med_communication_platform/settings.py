@@ -108,12 +108,12 @@ DATABASES = {
 }
 
 
-BROKER_URL = os.environ.get("REDIS_URL", "redis")
+CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis")
 CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis")
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Russia/Moscow'
+CELERY_TIMEZONE = 'Europe/Moscow'
 
 
 # Email setting
