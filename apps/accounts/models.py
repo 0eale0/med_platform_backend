@@ -61,9 +61,11 @@ class Patient(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
 
     def save(self, **kwargs):
-        self.calories, self.protein, self.fat, self.carbohydrate = calculate_cpfc(
-            self.height, self.weight, self.activity_level, self.birth_date, self.sex
-        )
+        args = [self.height, self.weight, self.activity_level, self.birth_date, self.sex]
+        if None not in args:
+            self.calories, self.protein, self.fat, self.carbohydrate = calculate_cpfc(
+                *args
+            )
         super(Patient, self).save()
 
     def __str__(self):

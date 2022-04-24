@@ -1,11 +1,6 @@
-import json
 import pytest
 
-# from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
-from django_mock_queries.mocks import MockSet
-
-from apps.accounts.viewsets import PatientViewForDoctor
 from tests.test_accounts.factories import UserFactory, DoctorFactory, PatientFactory
 
 pytestmark = pytest.mark.django_db
@@ -15,29 +10,26 @@ pytestmark = pytest.mark.django_db
 class TestPatientViewForDoctor(APITestCase):
     def setUp(self):
         user_doctor = UserFactory(email='doc@mail.ru')
-        user_patient1, user_patient2 = UserFactory(), UserFactory()
-
         self.doctor = DoctorFactory(user=user_doctor)
-        self.patient1 = PatientFactory(user=user_patient1)
-        self.patient2 = PatientFactory(user=user_patient2)
+
+        user_patient1, user_patient2 = UserFactory(), UserFactory()
+        self.patient1 = PatientFactory(user=user_patient1, doctor=self.doctor)
+        self.patient2 = PatientFactory(user=user_patient2, doctor=self.doctor)
 
         self.client = APIClient()
         response = self.client.post("/api/auth/token/", {'email': 'doc@mail.ru', 'password': '123'})
-        # assert response.json() == 0
+
         self.access_token = response.json()['access']
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
 
-    def test_get_list_patient(self, mocker, rf):
+    def test_get_list_patient(self):
         url = '/api/accounts/patient/'
-        request = self.client.get(url)
-        qs = MockSet(
-            self.patient1,
-            self.patient2
-        )
-        view = PatientViewForDoctor.as_view(
-            {'get': 'list'}
-        )
-        mocker.patch.object(PatientViewForDoctor, 'get_queryset', return_value=qs)
-        response = view(request).render()
-        assert response == 200
-        assert len(json.loads(response.content)) == 2
+        response = self.client.get(url)
+        assert response.status_code == 200
+        assert len(response.json()) == 2
+
+    def test_get_info_about_patient(self):
+        url = '/api/accounts/patient/1/'
+        response = self.client.get(url, {"patient_id": self.patient1.id})
+        assert response.status_code == 200
+        assert response.json()["id"] == self.patient1.id

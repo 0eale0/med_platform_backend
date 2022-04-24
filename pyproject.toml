@@ -46,7 +46,7 @@ filterwarnings = [
     'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
 python_files = ['test_*.py']
-addopts = ['-vv', '-x', '--lf', '--cov', '-p', 'no:warnings']
+addopts = ['-vv', '--cov', '-p', 'no:warnings']
 
 [tool.coverage.run]
 source = ["apps"]

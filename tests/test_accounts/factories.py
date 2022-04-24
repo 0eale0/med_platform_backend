@@ -34,9 +34,9 @@ class PatientFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Patient
 
-    user = factory.SubFactory(UserFactory)
-    doctor = factory.SubFactory(DoctorFactory)
     height = weight = 100
     activity_level = 'почти нет активности'
     birth_date = datetime.date(2000, 1, 1)
     sex = 'male'
+    user = factory.SubFactory(UserFactory)
+    doctor = factory.SubFactory(DoctorFactory)
