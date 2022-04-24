@@ -24,6 +24,8 @@ model-bakery = "^1.5.0"
 pytest-cov = "^3.0.0"
 click = "^8.1.2"
 django-mock-queries = "^2.1.7"
+pytest-django = "^4.5.2"
+pytest-mock = "^3.7.0"
 
 [tool.poetry.dev-dependencies]
 
@@ -38,10 +40,13 @@ build-backend = "poetry.core.masonry.api"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "med_communication_platform.settings"
 filterwarnings = [
+    "error",
     "ignore::UserWarning",
+    # note the use of single quote below to denote "raw" strings in TOML
+    'ignore:function ham\(\) is deprecated:DeprecationWarning',
 ]
 python_files = ['test_*.py']
-addopts = ['-vv', '-x', '--lf', '--cov']
+addopts = ['-vv', '-x', '--lf', '--cov', '-p', 'no:warnings']
 
 [tool.coverage.run]
 source = ["apps"]

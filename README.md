@@ -11,5 +11,5 @@
 7) `python manage.py migrate` - применить миграции к базе данных
 8) `python manage.py runserver` - запуск сервера для разработки
 
- `pytest --cov --cov-config=pyproject.toml` - прогон тестов + coverage
+ `pytest` - прогон тестов + coverage
 
