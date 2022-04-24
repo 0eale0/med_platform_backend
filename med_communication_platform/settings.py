@@ -98,19 +98,16 @@ WSGI_APPLICATION = "med_communication_platform.wsgi.application"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-if 'test' in sys.argv:
-    DATABASES = {"default": {'ENGINE': 'django.db.backends.sqlite3', 'NAME': 'mydatabase'}}
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": os.environ.get("DB_NAME", "dbname"),
-            "USER": os.environ.get("DB_USER", "dbuser"),
-            "PASSWORD": os.environ.get("DB_PASSWORD", "dbpass"),
-            "HOST": os.environ.get("DB_HOST", "dbhost"),
-            "PORT": "5432",
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ.get("DB_NAME", "dbname"),
+        "USER": os.environ.get("DB_USER", "dbuser"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "dbpass"),
+        "HOST": os.environ.get("DB_HOST", "dbhost"),
+        "PORT": "5432",
     }
+}
 
 BROKER_URL = os.environ.get("REDIS_URL", "redis")
 CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis")
