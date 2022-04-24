@@ -8,29 +8,31 @@ from django_mock_queries.mocks import MockSet
 from apps.accounts.viewsets import PatientViewForDoctor
 from tests.test_accounts.factories import UserFactory, DoctorFactory, PatientFactory
 
-
-user_doctor = UserFactory.build(email='doc@mail.ru')
-user_patient1, user_patient2 = UserFactory.build_batch(2)
-
-doctor = DoctorFactory.build(user=user_doctor)
-patient1 = PatientFactory.build(user=user_patient1)
-patient2 = PatientFactory.build(user=user_patient2)
+pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.django_db
 class TestPatientViewForDoctor(APITestCase):
     def setUp(self):
+        user_doctor = UserFactory(email='doc@mail.ru')
+        user_patient1, user_patient2 = UserFactory(), UserFactory()
+
+        self.doctor = DoctorFactory(user=user_doctor)
+        self.patient1 = PatientFactory(user=user_patient1)
+        self.patient2 = PatientFactory(user=user_patient2)
+
         self.client = APIClient()
-        response = self.client.post("/api/auth/token/", {'email': 'doc@mail.ru'})
-        assert response == 0
-        self.access_token = response.json()['access_token']
+        response = self.client.post("/api/auth/token/", {'email': 'doc@mail.ru', 'password': '123'})
+        # assert response.json() == 0
+        self.access_token = response.json()['access']
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
 
     def test_get_list_patient(self, mocker, rf):
         url = '/api/accounts/patient/'
-        request = rf.get(url)
+        request = self.client.get(url)
         qs = MockSet(
-            patient1,
-            patient2
+            self.patient1,
+            self.patient2
         )
         view = PatientViewForDoctor.as_view(
             {'get': 'list'}
