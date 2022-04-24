@@ -5,6 +5,7 @@ import factory
 from django.contrib.auth.hashers import make_password
 
 from apps.accounts.models import User, Doctor, Patient
+from apps.menus.models import Dish
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -40,3 +41,9 @@ class PatientFactory(factory.django.DjangoModelFactory):
     sex = 'male'
     user = factory.SubFactory(UserFactory)
     doctor = factory.SubFactory(DoctorFactory)
+
+
+class DishFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Dish
+
