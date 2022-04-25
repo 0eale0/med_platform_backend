@@ -30,3 +30,19 @@ class TestIngredientViewSet(InitMenu):
         response = self.doctor_authorized.get(url)
         assert response.status_code == 200
         assert response.json()['name'] == "potato"
+
+
+class TestDayViewSet(InitMenu):
+    def test_get_list_day(self):
+        url = '/api/menus/day/'
+        response = self.doctor_authorized.get(url)
+        assert response.status_code == 200
+        assert len(response.json()) == 1
+        assert response.json()[0]['number'] == 1
+
+    def test_get_info_day(self):
+        url = '/api/menus/day/1/'
+        response = self.doctor_authorized.get(url)
+        assert response.status_code == 200
+        assert response.json()['number'] == 1
+        assert response.json()['dishes'][0]['recipe'] == "just do it"
