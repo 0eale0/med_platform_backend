@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from apps.accounts.models import Patient, User, Doctor
 from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
 from apps.accounts.tasks import send_email_activation, test
-from apps.accounts.utils import get_dict_with_changes
+from utils.functions import get_dict_with_changes
 from apps.menus.permissions import IsDoctor, IsPatient
 
 
@@ -94,6 +94,7 @@ class ObjectHistory(APIView):
     permission_classes = [IsDoctor & IsPatient]
 
     allowed_models_for_history = {"patient": Patient}
+    allowed_fields_for_history = {"patient": {"height", "weight", "city"}}  # if model not in dict return all fields
     MAX_COUNT_TO_RETURN = 5
 
     def get(self, request, model, pk):
@@ -107,6 +108,7 @@ class ObjectHistory(APIView):
             )
 
         model_class = self.allowed_models_for_history[model]
+        fields = self.allowed_fields_for_history.get(model, [field.name for field in model_class._meta.get_fields()])
         doctor = Doctor.objects.filter(user=request.user).first()
 
         if doctor:
@@ -114,6 +116,6 @@ class ObjectHistory(APIView):
         else:
             object_to_check_history = Patient.objects.filter(user=request.user).first()
 
-        dict_with_changes = get_dict_with_changes(object_to_check_history, self.MAX_COUNT_TO_RETURN)
+        dict_with_changes = get_dict_with_changes(object_to_check_history, self.MAX_COUNT_TO_RETURN, fields)
 
         return Response(dict_with_changes)

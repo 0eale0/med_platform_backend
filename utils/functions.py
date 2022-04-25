@@ -21,3 +21,33 @@ def calculate_cpfc(height: float, weight: float, activity_level: str, birth_date
     fat = round(calories * 0.3 / 9)
     carbohydrate = round(calories * 0.1)
     return calories, protein, fat, carbohydrate
+
+
+# Functions for history
+def changed_fields_with_values(history_obj, fields):
+    changes = {}
+    if history_obj.prev_record:
+        delta = history_obj.diff_against(history_obj.prev_record)
+        for change in delta.changes:
+            if change.field in fields:
+                changes["param_name"] = change.field
+                changes["old"] = change.old
+                changes["new"] = change.new
+        return changes
+    return None
+
+
+def get_dict_with_changes(obj, max_count_of_changes, fields):
+    result = []
+    history_obj = obj.history.first()
+    for i in range(max_count_of_changes):
+        changes = changed_fields_with_values(history_obj, fields)
+        if not changes:
+            break
+        date_value = history_obj.history_date.strftime("%Y-%m-%d %H:%M:%S")
+        changes["date"] = date_value
+        history_obj = history_obj.prev_record
+        result.append(changes)
+
+    return result
+
