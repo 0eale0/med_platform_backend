@@ -50,4 +50,3 @@ def get_dict_with_changes(obj, max_count_of_changes, fields):
         result.append(changes)
 
     return result
-
