@@ -5,7 +5,7 @@ import factory
 from django.contrib.auth.hashers import make_password
 
 from apps.accounts.models import User, Doctor, Patient
-from apps.menus.models import Dish
+from tests.test_menus.factories import MenuFactory
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -35,15 +35,7 @@ class PatientFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Patient
 
-    height = weight = 100
-    activity_level = 'почти нет активности'
-    birth_date = datetime.date(2000, 1, 1)
-    sex = 'male'
+    menu_id = factory.SubFactory(MenuFactory)
+
     user = factory.SubFactory(UserFactory)
     doctor = factory.SubFactory(DoctorFactory)
-
-
-class DishFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Dish
-
