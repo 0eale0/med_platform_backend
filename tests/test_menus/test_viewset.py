@@ -1,4 +1,3 @@
-from apps.menus.models import Ingredient
 from tests.test_menus.conftest import InitMenu
 
 
@@ -26,7 +25,7 @@ class TestIngredientViewSet(InitMenu):
         assert response.json()[0]['name'] == "potato"
 
     def test_get_info_about_ingredient(self):
-        url = '/api/menus/ingredients/1/'
+        url = f'/api/menus/ingredients/{self.ingredient_1.id}/'
         response = self.doctor_authorized.get(url)
         assert response.status_code == 200
         assert response.json()['name'] == "potato"
@@ -41,7 +40,7 @@ class TestDayViewSet(InitMenu):
         assert response.json()[0]['number'] == 1
 
     def test_get_info_day(self):
-        url = '/api/menus/day/1/'
+        url = f'/api/menus/day/{self.day.id}/'
         response = self.doctor_authorized.get(url)
         assert response.status_code == 200
         assert response.json()['number'] == 1

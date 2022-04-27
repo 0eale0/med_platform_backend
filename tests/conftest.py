@@ -19,8 +19,9 @@ class InitUsers(APITestCase):
 
     def auth_doctor(self) -> None:
         self.doctor_authorized = APIClient()
-        response_for_doctor = self.doctor_authorized.post("/api/auth/token/",
-                                                          {'email': 'doc@mail.ru', 'password': '123'})
+        response_for_doctor = self.doctor_authorized.post(
+            "/api/auth/token/", {'email': 'doc@mail.ru', 'password': '123'}
+        )
 
         self.access_token = response_for_doctor.json()['access']
         self.doctor_authorized.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
@@ -33,8 +34,9 @@ class InitUsers(APITestCase):
 
     def auth_patient(self) -> None:
         self.patient_authorized = APIClient()
-        response_for_patient = self.patient_authorized.post("/api/auth/token/",
-                                                            {'email': 'patient@mail.ru', 'password': '123'})
+        response_for_patient = self.patient_authorized.post(
+            "/api/auth/token/", {'email': 'patient@mail.ru', 'password': '123'}
+        )
         self.access_token = response_for_patient.json()['access']
         self.patient_authorized.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
 
