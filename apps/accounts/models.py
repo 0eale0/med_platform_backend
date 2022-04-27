@@ -63,9 +63,7 @@ class Patient(models.Model):
     def save(self, **kwargs):
         args = [self.height, self.weight, self.activity_level, self.birth_date, self.sex]
         if None not in args:
-            self.calories, self.protein, self.fat, self.carbohydrate = calculate_cpfc(
-                *args
-            )
+            self.calories, self.protein, self.fat, self.carbohydrate = calculate_cpfc(*args)
         super(Patient, self).save()
 
     def __str__(self):
