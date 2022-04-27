@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -96,6 +97,7 @@ WSGI_APPLICATION = "med_communication_platform.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -114,7 +116,6 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Europe/Moscow'
-
 
 # Email setting
 EMAIL_HOST = os.environ.get("EMAIL_HOST")  # fill the host in .env file
@@ -203,7 +204,6 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(days=365),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=365),
 }
-
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
