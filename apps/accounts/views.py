@@ -64,7 +64,7 @@ class ActivateUserView(APIView):
             User.objects.filter(id=user.id).update(**serializer.validated_data["user"], is_active=False)
             Patient.objects.filter(id=patient.id).update(**serializer.validated_data["patient"], link_token=email_token)
             user.refresh_from_db()
-            send_email_activation(get_current_site(request).domain, user.email, user.patient.link_token)
+            send_email_activation.delay(get_current_site(request).domain, user.email, user.patient.link_token)
             return Response({"status": "ok"})
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -76,6 +76,7 @@ class WhoAmIView(APIView):
     serializer_class = UserSerializer
 
     def get(self, request):
+        test.delay()
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
         doctor = Doctor.objects.filter(user=request.user).first()
