@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from simple_history.models import HistoricalRecords
+
 from apps.accounts.auth import UserProfileManager
 from apps.menus.models import Menu
 from utils.functions import calculate_cpfc
@@ -36,6 +38,8 @@ class Doctor(models.Model):
 
 
 class Patient(models.Model):
+    history = HistoricalRecords()  # tracking history
+
     phone_number = models.CharField(max_length=100, **NULLABLE)  # unique=True
     medical_card_number = models.CharField(max_length=255, **NULLABLE)
     insurance_policy_number = models.CharField(max_length=100, **NULLABLE)

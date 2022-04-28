@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from apps.accounts.models import Patient, User, Doctor
 from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
 from apps.accounts.tasks import send_email_activation, test
+from utils.functions import get_dict_with_changes
+from apps.menus.permissions import IsDoctor, IsPatient
 
 
 class VerifyEmailView(APIView):
@@ -86,3 +88,35 @@ class WhoAmIView(APIView):
         user_serialized["is_patient"] = bool(patient)
         user_serialized["patient_id"] = patient.pk if patient else None
         return Response(user_serialized)
+
+
+class ObjectHistory(APIView):
+    permission_classes = [IsDoctor & IsPatient]
+
+    allowed_models_for_history = {"patient": Patient}
+    allowed_fields_for_history = {"patient": {"height", "weight", "city"}}  # if model not in dict return all fields
+    MAX_COUNT_TO_RETURN = 5
+
+    def get(self, request, model, pk):
+        if model not in self.allowed_models_for_history.keys():
+            return Response(
+                {"status": "not ok", "error": "this model does not history"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        model_class = self.allowed_models_for_history[model]
+        fields = self.allowed_fields_for_history.get(model, [field.name for field in model_class._meta.get_fields()])
+        doctor = Doctor.objects.filter(user=request.user.pk).first()
+
+        if doctor:
+            object_to_check_history = model_class.objects.filter(user=pk).first()
+        else:
+            object_to_check_history = Patient.objects.filter(user=request.user).first()
+
+        if not object_to_check_history:
+            return Response(
+                {"status": "not ok", "error": "this user does not exists"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        dict_with_changes = get_dict_with_changes(object_to_check_history, self.MAX_COUNT_TO_RETURN, fields)
+
+        return Response(dict_with_changes)
