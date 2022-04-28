@@ -10,3 +10,6 @@
 6) `pre-commit install` - установка pre-commit хуков для запуска линтеров перед коммитом
 7) `python manage.py migrate` - применить миграции к базе данных
 8) `python manage.py runserver` - запуск сервера для разработки
+
+ `pytest` - прогон тестов + coverage
+
