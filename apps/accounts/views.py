@@ -78,7 +78,7 @@ class WhoAmIView(APIView):
     serializer_class = UserSerializer
 
     def get(self, request):
-        # test.delay()
+        test.delay()
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
         doctor = Doctor.objects.filter(user=request.user).first()

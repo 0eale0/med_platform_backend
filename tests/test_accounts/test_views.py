@@ -9,10 +9,11 @@ class TestWhoAmI(InitUsers):
         values_to_check = ("first_name", "last_name", "middle_name", "email")
         constants = {"is_doctor": True, "is_patient": False}
 
-        info_from_object = {**{value: getattr(self.doctor.user, value) for value in values_to_check},
-                            **constants}
-        info_from_response = {**{value: response.json()[value] for value in values_to_check},
-                              **{value: response.json()[value] for value in constants.keys()}}
+        info_from_object = {**{value: getattr(self.doctor.user, value) for value in values_to_check}, **constants}
+        info_from_response = {
+            **{value: response.json()[value] for value in values_to_check},
+            **{value: response.json()[value] for value in constants.keys()},
+        }
 
         assert response.status_code == 200
         assert info_from_object == info_from_response
@@ -24,10 +25,11 @@ class TestWhoAmI(InitUsers):
         values_to_check = ("first_name", "last_name", "middle_name", "email")
         constants = {"is_doctor": False, "is_patient": True}
 
-        info_from_object = {**{value: getattr(self.patient1.user, value) for value in values_to_check},
-                            **constants}
-        info_from_response = {**{value: response.json()[value] for value in values_to_check},
-                              **{value: response.json()[value] for value in constants.keys()}}
+        info_from_object = {**{value: getattr(self.patient1.user, value) for value in values_to_check}, **constants}
+        info_from_response = {
+            **{value: response.json()[value] for value in values_to_check},
+            **{value: response.json()[value] for value in constants.keys()},
+        }
 
         assert response.status_code == 200
         assert info_from_object == info_from_response
@@ -40,5 +42,3 @@ class TestWhoAmI(InitUsers):
         await_result = {'error': 'login to view info'}
 
         assert response_result == await_result
-
-
