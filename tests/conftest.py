@@ -26,6 +26,9 @@ class InitUsers(APITestCase):
         self.access_token = response_for_doctor.json()['access']
         self.doctor_authorized.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
 
+    def auth_anonymous_user(self) -> None:
+        self.anonymous_user = APIClient()
+
     def init_patients(self) -> None:
         self.user_patient1 = UserFactory(email='patient@mail.ru')
         self.user_patient2 = UserFactory()
@@ -48,3 +51,5 @@ class InitUsers(APITestCase):
 
         self.init_patients()
         self.auth_patient()
+
+        self.auth_anonymous_user()
