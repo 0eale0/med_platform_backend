@@ -4,6 +4,8 @@ from apps.accounts.models import Patient, User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=False)
+
     class Meta:
         model = User
         fields = ["first_name", "last_name", "middle_name", "email", "password"]

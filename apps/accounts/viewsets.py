@@ -31,6 +31,13 @@ class BaseForPatientView(viewsets.ModelViewSet):
     def generate_token() -> str:
         return str(uuid4())
 
+    @staticmethod
+    def rise_data(request: dict):
+        new_data = request.pop('patient')
+        for item in new_data:
+            request[item] = new_data[item]
+        return request
+
     def create(self, request, *args, **kwargs):
         username = ''.join(random.choices(string.ascii_uppercase + string.digits, k=15))
         token = self.generate_token()
@@ -54,12 +61,13 @@ class BaseForPatientView(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        request.data['user'].pop('email')
+        serializer = self.get_serializer(data=self.rise_data(request.data))
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data.pop("user")
-        patient_obj = get_object_or_404(Patient, id=serializer.validated_data.pop("id"))
+        patient_obj = get_object_or_404(Patient, id=serializer.validated_data.get("id"))
         user_obj = get_object_or_404(User, id=patient_obj.user.id)
-        user_obj.first_name = user["first_name"]  # TODO fix this shit
+        user_obj.first_name = user["first_name"]
         user_obj.last_name = user["last_name"]
         user_obj.middle_name = user["middle_name"]
         user_obj.save()
