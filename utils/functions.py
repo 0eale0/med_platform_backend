@@ -17,9 +17,9 @@ def calculate_cpfc(height: float, weight: float, activity_level: str, birth_date
         CONSTANTS_FOR_ACTIVITY_LEVEL[activity_level]
         * (constants[0] + weight * constants[1] + height * constants[2] - age * constants[3])
     )
-    protein = round(calories * 0.3 / 4)
+    protein = round(calories * 0.2 / 4)
     fat = round(calories * 0.3 / 9)
-    carbohydrate = round(calories * 0.1)
+    carbohydrate = round(calories * 0.5 / 4)
     return calories, protein, fat, carbohydrate
 
 
