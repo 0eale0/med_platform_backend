@@ -17,6 +17,8 @@ pytest:
   script:
   - pip install poetry
   - poetry install
+  - poetry run python3
+  - print("WORK")
   - poetry run pytest -v
 
 deploy:
