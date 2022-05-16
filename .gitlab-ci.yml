@@ -15,7 +15,10 @@ lint:
 pytest:
   stage: test
   script:
-  - pip install pytest==7.1.2
+  - pip install poetry
+  - poetry shell
+  - poetry install
+  - python3 manage.py runserver
   - pytest -v
 
 deploy:
