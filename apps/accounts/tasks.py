@@ -9,7 +9,8 @@ from med_communication_platform.celery import app
 @app.task()
 def send_email_activation(domain, user_email, email_token):
     link = reverse('verify', kwargs={'token': email_token})
-    activate_url = 'http://' + domain + link
+
+    activate_url = f'http://med-plaform.a.uenv.ru/verify/{email_token}/'
 
     email_subject = "Activate you're account"
     email_text = f"Please the link below to activate your account \n{activate_url}"

@@ -14,6 +14,6 @@ urlpatterns = [
     path(r"api/auth/token/refresh/", TokenRefreshView.as_view()),
     path(r"api/accounts/activate/", ActivateUserView.as_view()),
     path(r"api/accounts/whoami/", WhoAmIView.as_view()),
-    path(r"api/accounts/verify/<token>/", VerifyEmailView.as_view(), name="VerifyEmail"),
+    path(r"api/accounts/VerifyEmail/<token>/", VerifyEmailView.as_view(), name="VerifyEmail"),
     path(r"api/accounts/history/<model>/<pk>/", ObjectHistory.as_view()),
 ]
