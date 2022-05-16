@@ -17,7 +17,6 @@ pytest:
   script:
   - pip install poetry
   - poetry install
-  - poetry run python3 manage.py runserver
   - poetry run pytest -v
 
 deploy:
