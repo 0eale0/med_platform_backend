@@ -3,6 +3,7 @@ image: python:3.8.12
 stages:
   - lint
   - deploy
+  - test
 
 lint:
   stage: lint
@@ -12,7 +13,7 @@ lint:
     - black . --check --diff
 
 pytest:
-  stage: Test
+  stage: test
   script:
   - pytest -v
 
