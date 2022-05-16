@@ -16,7 +16,6 @@ pytest:
   stage: test
   script:
   - pip install poetry
-  - poetry shell
   - poetry install
   - python3 manage.py runserver
   - pytest -v
