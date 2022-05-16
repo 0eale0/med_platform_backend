@@ -11,6 +11,11 @@ lint:
     - pip install black==21.7b0
     - black . --check --diff
 
+pytest:
+  stage: Test
+  script:
+  - pytest -v
+
 deploy:
   stage: deploy
   script:
