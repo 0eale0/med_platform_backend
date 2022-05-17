@@ -38,7 +38,6 @@ def changed_fields_with_values(history_obj, fields):
                 changes["old"] = change.old
                 changes["new"] = change.new
         return changes
-        
     return None
 
 
