@@ -8,11 +8,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from transliterate import translit
 
-from apps.accounts.models import Patient, User
-from apps.accounts.serializers import BaseForPatientSerializer, UserSerializer
+from apps.accounts.models import Patient, User, Doctor
+from apps.accounts.serializers import BaseForPatientSerializer, UserSerializer, DoctorSerializer
 from apps.menus.serializers import MenuSerializer
 from apps.menus.models import Menu
-from apps.menus.permissions import IsDoctor, IsPatient
+from apps.menus.permissions import IsDoctor, IsPatient, IsPersonalCabinetOwner
 
 
 class BaseForPatientView(viewsets.ModelViewSet):
@@ -93,3 +93,19 @@ class ForPatientView(BaseForPatientView):
 
     def create(self, request, *args, **kwargs):
         return Response({"error": True, "status": 403})
+
+
+class DoctorViewSet(viewsets.ModelViewSet):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+    permissions = [IsPersonalCabinetOwner]
+
+    def update(self, request, *args, **kwargs):
+        doctor = get_object_or_404(Doctor, user_id=request.user.id)
+        doctor.contact_details = request.data["contact_details"]
+        doctor.save()
+        return Response({'contact_details': doctor.contact_details})
+
+    def retrieve(self, request, *args, **kwargs):
+        doctor = get_object_or_404(Doctor, id=kwargs["pk"])
+        return Response(DoctorSerializer(doctor).data)
