@@ -122,7 +122,9 @@ class ObjectHistory(APIView):
 
 
 class CalculateCPFC(APIView):
-    permission_classes = [PatientDoctorOrPatient, ]
+    permission_classes = [
+        PatientDoctorOrPatient,
+    ]
     queryset = Patient.objects.all()
 
     def post(self, request, pk):

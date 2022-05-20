@@ -66,7 +66,7 @@ class Patient(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, **NULLABLE)
 
     def save(self, **kwargs):
-        if not self.calories: #TODO если что-то не так с КБЖУ скорее всего это сдесь
+        if not self.calories:  # TODO если что-то не так с КБЖУ скорее всего это сдесь
             self.set_cpfc()
 
     def set_cpfc(self):
