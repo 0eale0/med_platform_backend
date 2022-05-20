@@ -25,6 +25,7 @@ def calculate_cpfc(height: float, weight: float, activity_level: str, birth_date
         return calories, protein, fat, carbohydrate
     except Exception as error:
         capture_exception(error)
+        return None, None, None, None
 
 
 # Functions for history

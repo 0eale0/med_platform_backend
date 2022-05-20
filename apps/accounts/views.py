@@ -78,7 +78,6 @@ class WhoAmIView(APIView):
     serializer_class = UserSerializer
 
     def get(self, request):
-        test.delay()
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
         doctor = Doctor.objects.filter(user=request.user).first()
@@ -123,11 +122,12 @@ class ObjectHistory(APIView):
 
 
 class CalculateCPFC(APIView):
-    permission_classes = [PatientDoctorOrPatient,]
+    permission_classes = [PatientDoctorOrPatient, ]
     queryset = Patient.objects.all()
 
     def post(self, request, pk):
-        patient = Patient.objects.get(pk)
+        patient = Patient.objects.get(id=pk)
+        self.check_object_permissions(self.request, patient)
         if patient:
             patient.set_cpfc()
         return Response({"status": "ok"})

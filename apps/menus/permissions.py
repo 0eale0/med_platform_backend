@@ -1,5 +1,4 @@
 from rest_framework import permissions
-from rest_framework.response import Response
 
 from apps.accounts.models import Patient
 
@@ -67,14 +66,16 @@ class IsPersonalCabinetOwner(permissions.BasePermission):
 
 
 class PatientDoctorOrPatient(permissions.BasePermission):
-    "если ты доктор делай что хочешь, если пациент, то только смеотреть или менять в своем дне"
 
     def has_object_permission(self, request, view, obj):
+        if request.user.is_anonymous:
+            return False
+
         if request.method in permissions.SAFE_METHODS:
             return False
 
-        if request.user.patient == obj:
+        if obj.doctor == request.user.doctor:
             return True
 
-        if obj.doctor == request.user.doctor:
+        if request.user.patient == obj:
             return True

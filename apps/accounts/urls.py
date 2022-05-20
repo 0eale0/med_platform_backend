@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from apps.accounts.views import ActivateUserView, WhoAmIView, VerifyEmailView, ObjectHistory
+from apps.accounts.views import ActivateUserView, WhoAmIView, VerifyEmailView, ObjectHistory, CalculateCPFC
 from apps.accounts.viewsets import PatientViewForDoctor, DoctorViewSet
 
 router = routers.SimpleRouter()
@@ -17,5 +17,5 @@ urlpatterns = [
     path(r"api/accounts/whoami/", WhoAmIView.as_view()),
     path(r"api/accounts/VerifyEmail/<token>/", VerifyEmailView.as_view(), name="VerifyEmail"),
     path(r"api/accounts/history/<model>/<pk>/", ObjectHistory.as_view()),
-    path(r"api/accounts/calculatecpfc/<pk>/", ObjectHistory.as_view()),
+    path(r"api/accounts/calculatecpfc/<pk>/", CalculateCPFC.as_view()),
 ]
