@@ -6,15 +6,16 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.accounts.models import Patient
+from apps.accounts.models import Patient, User
 from apps.menus import serializers
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
-from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner
+from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner, IsPatient
 from apps.menus.serializers import (
     MenuSerializer,
     IngredientSerializer,
     DaySerializer,
     DishSerializer,
+    DishSerializerForPatient,
     DayDishSerializer,
     DishIngredientSerializer,
     DishListSerializer,
@@ -110,11 +111,15 @@ class DayViewSet(viewsets.ModelViewSet):
 class DishViewSet(viewsets.ModelViewSet):
     serializer_class = DishSerializer
     queryset = Dish.objects.all()
-    permission_classes = [IsAuthenticated & IsDoctor]
+    permission_classes = []
 
     def create(self, request, *args, **kwargs):
+        print(request.data["dish"])
         dish = Dish.objects.create(**request.data["dish"])
+        print("FFFF")
         ingredients = request.data["ingredients"]
+
+        print("DKSADLASJLDJADJLSA")
 
         DishIngredient.objects.bulk_create(
             [
@@ -130,6 +135,37 @@ class DishViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         return Response(DishDetailSerializer(self.get_object()).data)
+
+
+class DishForPatient(DishViewSet):
+    serializer_class = DishSerializerForPatient
+    queryset = Dish.objects.all()
+    permission_classes = [IsAuthenticated & IsPatient]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+
+        dish = Dish.objects.create(user=user.pk, **request.data["dish"])
+        ingredients = request.data["ingredients"]
+
+        DishIngredient.objects.bulk_create(
+            [
+                DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
+                for ingredient in ingredients
+            ]
+        )
+
+        serializer = serializers.DishSerializer(dish)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def retrieve(self, request, *args, **kwargs):
+        dish = self.get_object()
+        if request.user == dish.user:
+            return Response(DishDetailSerializer(dish).data)
+
+        return Response({"error": True, "status": 403})
 
 
 class DayDishViewSet(viewsets.ModelViewSet):
