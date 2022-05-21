@@ -8,6 +8,7 @@ class Menu(models.Model):
 class Day(models.Model):
     done = models.BooleanField(default=False, blank=True)
     number = models.IntegerField()
+    date = models.DateTimeField(auto_now_add=True)
 
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
 
