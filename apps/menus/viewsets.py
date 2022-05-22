@@ -111,15 +111,11 @@ class DayViewSet(viewsets.ModelViewSet):
 class DishViewSet(viewsets.ModelViewSet):
     serializer_class = DishSerializer
     queryset = Dish.objects.all()
-    permission_classes = []
+    permission_classes = [IsAuthenticated & IsDoctor]
 
     def create(self, request, *args, **kwargs):
-        print(request.data["dish"])
         dish = Dish.objects.create(**request.data["dish"])
-        print("FFFF")
         ingredients = request.data["ingredients"]
-
-        print("DKSADLASJLDJADJLSA")
 
         DishIngredient.objects.bulk_create(
             [
@@ -134,10 +130,11 @@ class DishViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
+        user = request.user
         return Response(DishDetailSerializer(self.get_object()).data)
 
 
-class DishForPatient(DishViewSet):
+class DishForPatient(viewsets.ModelViewSet):
     serializer_class = DishSerializerForPatient
     queryset = Dish.objects.all()
     permission_classes = [IsAuthenticated & IsPatient]
@@ -145,7 +142,10 @@ class DishForPatient(DishViewSet):
     def create(self, request, *args, **kwargs):
         user = request.user
 
-        dish = Dish.objects.create(user=user.pk, **request.data["dish"])
+        request.data["dish"]["user"] = user.pk
+
+        # dish = Dish.objects.create(**request.data["dish"])
+        dish = Dish.objects.create(**request.data)
         ingredients = request.data["ingredients"]
 
         DishIngredient.objects.bulk_create(
@@ -159,6 +159,13 @@ class DishForPatient(DishViewSet):
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def list(self, request):
+        user = request.user
+
+        result = self.queryset.filter(user=user.pk)
+        serializer = self.serializer_class(result, many=True)
+        return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         dish = self.get_object()
