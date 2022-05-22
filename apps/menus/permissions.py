@@ -1,5 +1,4 @@
 from rest_framework import permissions
-from rest_framework.response import Response
 
 from apps.accounts.models import Patient
 
@@ -63,4 +62,19 @@ class IsPersonalCabinetOwner(permissions.BasePermission):
             return True
 
         if request.user.doctor and obj.user_id == request.user.id:
+            return True
+
+
+class PatientDoctorOrPatient(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_anonymous:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return False
+
+        if obj.doctor == request.user.doctor:
+            return True
+
+        if request.user.patient == obj:
             return True

@@ -10,7 +10,7 @@ from apps.accounts.models import Patient, User, Doctor
 from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
 from apps.accounts.tasks import send_email_activation, test
 from utils.functions import get_dict_with_changes
-from apps.menus.permissions import IsDoctor, IsPatient
+from apps.menus.permissions import IsDoctor, IsPatient, PatientDoctorOrPatient
 
 
 class VerifyEmailView(APIView):
@@ -78,7 +78,6 @@ class WhoAmIView(APIView):
     serializer_class = UserSerializer
 
     def get(self, request):
-        test.delay()
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
         doctor = Doctor.objects.filter(user=request.user).first()
@@ -120,3 +119,17 @@ class ObjectHistory(APIView):
         dict_with_changes = get_dict_with_changes(object_to_check_history, self.MAX_COUNT_TO_RETURN, fields)
 
         return Response(dict_with_changes)
+
+
+class CalculateCPFC(APIView):
+    permission_classes = [
+        PatientDoctorOrPatient,
+    ]
+    queryset = Patient.objects.all()
+
+    def post(self, request, pk):
+        patient = Patient.objects.get(id=pk)
+        self.check_object_permissions(self.request, patient)
+        if patient:
+            patient.set_cpfc()
+        return Response({"status": "ok"})
