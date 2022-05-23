@@ -114,28 +114,23 @@ class DishViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     def create(self, request, *args, **kwargs):
-        user = request.data["dish"]["user"]
-        dish = Dish.objects.create(**request.data["dish"])
+        menu = Menu.objects.filter(id=request.data["menu_id"]).first()
+        day = Day.objects.create(menu=menu, done=False, number=request.data["day_number"])
+        day_dishes = request.data["dishes"]
 
-        today_date = datetime.date.today()
-        day = Day.objects.filter(date=today_date).first()
-        if not day:
-            menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
-            day = Day.objects.create(date=today_date, menu_id=menu_id)
+        DayDish.objects.bulk_create(
+            [
+                DayDish(
+                    time=day_dish["time"],
+                    dish_amount=day_dish["amount"],
+                    day=day,
+                    dish=Dish.objects.filter(id=day_dish["id"]).first(),
+                )
+                for day_dish in day_dishes
+            ]
+        )
 
-        day_dish = DayDish.objects.create(dish_amount=1, time=datetime.datetime.now().time(), day=day, dish=dish)
-
-        if "ingredients" in request.data.keys():
-            ingredients = request.data["ingredients"]
-
-            DishIngredient.objects.bulk_create(
-                [
-                    DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
-                    for ingredient in ingredients
-                ]
-            )
-
-        serializer = serializers.DishSerializer(dish)
+        serializer = serializers.DaySerializer(day)
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -147,7 +142,7 @@ class DishViewSet(viewsets.ModelViewSet):
 class DishForPatient(viewsets.ModelViewSet):
     serializer_class = DishSerializerForPatient
     queryset = Dish.objects.all()
-    permission_classes = []
+    permission_classes = [IsAuthenticated & IsPatient]
 
     def create(self, request, *args, **kwargs):
         user = request.user
