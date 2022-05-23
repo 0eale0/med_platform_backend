@@ -6,15 +6,16 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.accounts.models import Patient
+from apps.accounts.models import Patient, User
 from apps.menus import serializers
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
-from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner
+from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner, IsPatient
 from apps.menus.serializers import (
     MenuSerializer,
     IngredientSerializer,
     DaySerializer,
     DishSerializer,
+    DishSerializerForPatient,
     DayDishSerializer,
     DishIngredientSerializer,
     DishListSerializer,
@@ -113,23 +114,77 @@ class DishViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     def create(self, request, *args, **kwargs):
-        dish = Dish.objects.create(**request.data["dish"])
-        ingredients = request.data["ingredients"]
+        menu = Menu.objects.filter(id=request.data["menu_id"]).first()
+        day = Day.objects.create(menu=menu, done=False, number=request.data["day_number"])
+        day_dishes = request.data["dishes"]
 
-        DishIngredient.objects.bulk_create(
+        DayDish.objects.bulk_create(
             [
-                DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
-                for ingredient in ingredients
+                DayDish(
+                    time=day_dish["time"],
+                    dish_amount=day_dish["amount"],
+                    day=day,
+                    dish=Dish.objects.filter(id=day_dish["id"]).first(),
+                )
+                for day_dish in day_dishes
             ]
         )
 
-        serializer = serializers.DishSerializer(dish)
+        serializer = serializers.DaySerializer(day)
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def retrieve(self, request, *args, **kwargs):
         return Response(DishDetailSerializer(self.get_object()).data)
+
+
+class DishForPatient(viewsets.ModelViewSet):
+    serializer_class = DishSerializerForPatient
+    queryset = Dish.objects.all()
+    permission_classes = [IsAuthenticated & IsPatient]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        request.data["dish"]["user"] = user.pk
+        dish = Dish.objects.create(**request.data["dish"])
+
+        today_date = datetime.date.today()
+        day = Day.objects.filter(date=today_date).first()
+        if not day:
+            menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
+            day = Day.objects.create(date=today_date, menu_id=menu_id)
+
+        day_dish = DayDish.objects.create(dish_amount=1, time=datetime.datetime.now().time(), day=day, dish=dish)
+
+        if "ingredients" in request.data.keys():
+            ingredients = request.data["ingredients"]
+
+            DishIngredient.objects.bulk_create(
+                [
+                    DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
+                    for ingredient in ingredients
+                ]
+            )
+
+        serializer = serializers.DishSerializer(dish)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+
+        result = self.queryset.filter(user=user.pk)
+        serializer = self.serializer_class(result, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        dish = self.get_object()
+        if request.user == dish.user:
+            return Response(DishDetailSerializer(dish).data)
+
+        return Response({"error": True, "status": 403})
 
 
 class DayDishViewSet(viewsets.ModelViewSet):

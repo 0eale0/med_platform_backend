@@ -7,6 +7,7 @@ from apps.menus.viewsets import (
     DishViewSet,
     DayDishViewSet,
     DishIngredientViewSet,
+    DishForPatient,
 )
 
 router = routers.SimpleRouter()
@@ -17,3 +18,4 @@ router.register("api/menus/day/?", DayViewSet)
 router.register("api/menus/dish/?", DishViewSet)
 router.register("api/menus/day_dish/?", DayDishViewSet)
 router.register("api/menus/dish_ingredients/?", DishIngredientViewSet)
+router.register("api/menus/dish_patient/?", DishForPatient)
