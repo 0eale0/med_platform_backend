@@ -18,8 +18,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 class DishSerializerForPatient(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = ['id', 'name', 'default_weight', 'proteins',
-                  'fats', 'carbohydrates', 'calories', 'recipe', 'day']
+        fields = ['id', 'name', 'default_weight', 'proteins', 'fats', 'carbohydrates', 'calories', 'recipe', 'day']
+
 
 class DishSerializer(serializers.ModelSerializer):
     class Meta:

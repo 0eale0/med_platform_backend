@@ -123,10 +123,7 @@ class DishViewSet(viewsets.ModelViewSet):
             menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
             day = Day.objects.create(date=today_date, menu_id=menu_id)
 
-        day_dish = DayDish.objects.create(dish_amount=1,
-                                          time=datetime.datetime.now().time(),
-                                          day=day,
-                                          dish=dish)
+        day_dish = DayDish.objects.create(dish_amount=1, time=datetime.datetime.now().time(), day=day, dish=dish)
 
         if "ingredients" in request.data.keys():
             ingredients = request.data["ingredients"]
@@ -163,10 +160,7 @@ class DishForPatient(viewsets.ModelViewSet):
             menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
             day = Day.objects.create(date=today_date, menu_id=menu_id)
 
-        day_dish = DayDish.objects.create(dish_amount=1,
-                                          time=datetime.datetime.now().time(),
-                                          day=day,
-                                          dish=dish)
+        day_dish = DayDish.objects.create(dish_amount=1, time=datetime.datetime.now().time(), day=day, dish=dish)
 
         if "ingredients" in request.data.keys():
             ingredients = request.data["ingredients"]
