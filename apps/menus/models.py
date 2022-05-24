@@ -7,12 +7,16 @@ class Menu(models.Model):
 
 class Day(models.Model):
     done = models.BooleanField(default=False, blank=True)
-    number = models.IntegerField()
+    number = models.IntegerField(null=True, blank=True)
+    date = models.DateField(auto_now_add=True, null=True, blank=True)
 
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
 
 
 class Dish(models.Model):
+    user = models.OneToOneField("accounts.User", on_delete=models.SET_NULL, null=True)
+    is_for_all = models.BooleanField(default=False)
+
     name = models.CharField(max_length=60)
     default_weight = models.FloatField()
     proteins = models.FloatField()

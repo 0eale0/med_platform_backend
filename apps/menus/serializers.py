@@ -15,6 +15,12 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class DishSerializerForPatient(serializers.ModelSerializer):
+    class Meta:
+        model = Dish
+        fields = ['id', 'name', 'default_weight', 'proteins', 'fats', 'carbohydrates', 'calories', 'recipe', 'day']
+
+
 class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
