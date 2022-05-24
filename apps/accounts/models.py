@@ -68,6 +68,7 @@ class Patient(models.Model):
     def save(self, **kwargs):
         if not self.calories:  # TODO если что-то не так с КБЖУ скорее всего это сдесь
             self.set_cpfc()
+        super(Patient, self).save()
 
     def set_cpfc(self):
         args = [self.height, self.weight, self.activity_level, self.birth_date, self.sex]
