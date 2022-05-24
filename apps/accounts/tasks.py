@@ -8,7 +8,6 @@ from med_communication_platform.celery import app
 
 @app.task()
 def send_email_activation(domain, user_email, email_token):
-    link = reverse('verify', kwargs={'token': email_token})
 
     activate_url = f'http://med-plaform.a.uenv.ru/verify/{email_token}/'
 
