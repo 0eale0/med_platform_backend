@@ -133,3 +133,15 @@ class CalculateCPFC(APIView):
         if patient:
             patient.set_cpfc()
         return Response({"status": "ok"})
+    
+    
+class GetDoctor(APIView):
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+
+    def get(self, request):
+        if request.user.is_anonymous:
+            return Response({"error": "login to view info"})
+        contact_details = request.user.doctor.contact_details
+        return Response({"contact": contact_details})
