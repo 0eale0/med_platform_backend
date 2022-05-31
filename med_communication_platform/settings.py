@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third-party apps
+    "django_filters",
     "rest_framework",
     "corsheaders",
     "rest_framework_simplejwt",
@@ -110,7 +111,6 @@ DATABASES = {
         "PORT": "5432",
     }
 }
-
 
 CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis")
 CELERY_RESULT_BACKEND = os.environ.get("REDIS_URL", "redis")
@@ -177,6 +177,7 @@ AUTH_USER_MODEL = "accounts.User"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
 }
 
 # Simple jwt

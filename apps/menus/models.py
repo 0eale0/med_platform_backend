@@ -14,7 +14,7 @@ class Day(models.Model):
 
 
 class Dish(models.Model):
-    user = models.OneToOneField("accounts.User", on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey("accounts.User", on_delete=models.SET_NULL, null=True)
     is_for_all = models.BooleanField(default=False)
 
     name = models.CharField(max_length=60)

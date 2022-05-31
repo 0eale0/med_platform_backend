@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from apps.accounts.models import Patient, User
 from apps.menus import serializers
+from apps.menus.filters import DishFilter
 from apps.menus.models import Menu, Ingredient, Day, Dish, DayDish, DishIngredient
 from apps.menus.permissions import IsDoctor, IsOwnerOrReadOnlyDay, IsDayOwner, IsPatient
 from apps.menus.serializers import (
@@ -137,6 +138,7 @@ class DishForPatient(viewsets.ModelViewSet):
     serializer_class = DishSerializerForPatient
     queryset = Dish.objects.all()
     permission_classes = [IsAuthenticated & IsPatient]
+    filter_class = DishFilter
 
     def get_or_create_dish(self, request):
         dish_id = request.data.get("dish_id")
@@ -150,7 +152,7 @@ class DishForPatient(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        request.data["dish"]["user"] = user.pk
+        request.data["dish"]["user"] = user
         dish = self.get_or_create_dish(request)
 
         today_date = datetime.date.today()
@@ -159,7 +161,11 @@ class DishForPatient(viewsets.ModelViewSet):
             menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
             day = Day.objects.create(date=today_date, menu_id=menu_id)
 
-        day_dish = DayDish.objects.create(dish_amount=1, time=request["time"], day=day, dish=dish)
+        time = request.data.get("time")
+        if not time:
+            time = datetime.datetime.now()
+
+        day_dish = DayDish.objects.create(dish_amount=1, time=time, day=day, dish=dish)
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
@@ -169,7 +175,7 @@ class DishForPatient(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         user = request.user
 
-        result = self.queryset.filter(user=user.pk)
+        result = self.filter_queryset(self.queryset.filter(user=user.pk))
         serializer = self.serializer_class(result, many=True)
         return Response(serializer.data)
 
