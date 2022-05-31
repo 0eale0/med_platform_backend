@@ -133,8 +133,8 @@ class CalculateCPFC(APIView):
         if patient:
             patient.set_cpfc()
         return Response({"status": "ok"})
-    
-    
+
+
 class GetDoctor(APIView):
     permission_classes = [
         permissions.AllowAny,

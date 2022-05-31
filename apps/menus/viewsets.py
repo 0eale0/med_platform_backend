@@ -114,23 +114,17 @@ class DishViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     def create(self, request, *args, **kwargs):
-        menu = Menu.objects.filter(id=request.data["menu_id"]).first()
-        day = Day.objects.create(menu=menu, done=False, number=request.data["day_number"])
-        day_dishes = request.data["dishes"]
+        dish = Dish.objects.create(**request.data["dish"])
+        ingredients = request.data["ingredients"]
 
-        DayDish.objects.bulk_create(
+        DishIngredient.objects.bulk_create(
             [
-                DayDish(
-                    time=day_dish["time"],
-                    dish_amount=day_dish["amount"],
-                    day=day,
-                    dish=Dish.objects.filter(id=day_dish["id"]).first(),
-                )
-                for day_dish in day_dishes
+                DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
+                for ingredient in ingredients
             ]
         )
 
-        serializer = serializers.DaySerializer(day)
+        serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -144,10 +138,20 @@ class DishForPatient(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
     permission_classes = [IsAuthenticated & IsPatient]
 
+    def get_or_create_dish(self, request):
+        dish_id = request.data.get("dish_id")
+        if dish_id:
+            dish = Dish.objects.get(dish_id)
+            if not dish:
+                return Response({"status": "not ok", "error": "wrong dish_id"})
+        else:
+            dish = Dish.objects.create(**request.data["dish"])
+        return dish
+
     def create(self, request, *args, **kwargs):
         user = request.user
         request.data["dish"]["user"] = user.pk
-        dish = Dish.objects.create(**request.data["dish"])
+        dish = self.get_or_create_dish(request)
 
         today_date = datetime.date.today()
         day = Day.objects.filter(date=today_date).first()
@@ -155,17 +159,7 @@ class DishForPatient(viewsets.ModelViewSet):
             menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
             day = Day.objects.create(date=today_date, menu_id=menu_id)
 
-        day_dish = DayDish.objects.create(dish_amount=1, time=datetime.datetime.now().time(), day=day, dish=dish)
-
-        if "ingredients" in request.data.keys():
-            ingredients = request.data["ingredients"]
-
-            DishIngredient.objects.bulk_create(
-                [
-                    DishIngredient(ingredient_amount=ingredient["amount"], dish=dish, ingredient_id=ingredient["id"])
-                    for ingredient in ingredients
-                ]
-            )
+        day_dish = DayDish.objects.create(dish_amount=1, time=request["time"], day=day, dish=dish)
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
