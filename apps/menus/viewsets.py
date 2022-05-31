@@ -1,5 +1,6 @@
 import datetime
 
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -175,7 +176,7 @@ class DishForPatient(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         user = request.user
 
-        result = self.filter_queryset(self.queryset.filter(user=user.pk))
+        result = self.filter_queryset(self.queryset.filter(Q(user=user.pk) | ~Q(is_for_all=False)))
         serializer = self.serializer_class(result, many=True)
         return Response(serializer.data)
 
