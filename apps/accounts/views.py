@@ -80,7 +80,7 @@ class ActivateUserView(APIView):
             except IntegrityError:
                 return Response(
                     {"status": "not ok", 'detail': 'Пользователь с таким email уже существует'},
-                    status=status.HTTP_404_NOT_FOUND
+                    status=status.HTTP_404_NOT_FOUND,
                 )
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
 
