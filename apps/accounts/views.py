@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from django.contrib.sites.shortcuts import get_current_site
+from django.db import IntegrityError
 from django.http import HttpResponse
 from rest_framework import permissions, status
 from rest_framework.response import Response
@@ -68,11 +69,19 @@ class ActivateUserView(APIView):
             user.set_password(serializer.validated_data["user"].pop("password"))
             user.save()
             email_token = str(uuid4())
-            User.objects.filter(id=user.id).update(**serializer.validated_data["user"], is_active=False)
-            Patient.objects.filter(id=patient.id).update(**serializer.validated_data["patient"], link_token=email_token)
-            user.refresh_from_db()
-            send_email_activation.delay(get_current_site(request).domain, user.email, user.patient.link_token)
-            return Response({"status": "ok"})
+            try:
+                User.objects.filter(id=user.id).update(**serializer.validated_data["user"], is_active=False)
+                Patient.objects.filter(id=patient.id).update(
+                    **serializer.validated_data["patient"], link_token=email_token
+                )
+                user.refresh_from_db()
+                send_email_activation.delay(get_current_site(request).domain, user.email, user.patient.link_token)
+                return Response({"status": "ok"})
+            except IntegrityError:
+                return Response(
+                    {"status": "not ok", 'detail': 'Пользователь с таким email уже существует'},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
 
 
