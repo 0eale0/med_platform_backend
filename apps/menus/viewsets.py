@@ -148,12 +148,12 @@ class DishForPatient(viewsets.ModelViewSet):
             if not dish:
                 return Response({"status": "not ok", "error": "wrong dish_id"})
         else:
+            request.data["dish"]["user"] = request.user
             dish = Dish.objects.create(**request.data["dish"])
         return dish
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        request.data["dish"]["user"] = user
         dish = self.get_or_create_dish(request)
 
         today_date = datetime.date.today()
