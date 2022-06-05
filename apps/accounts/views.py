@@ -42,7 +42,12 @@ class ActivateUserView(APIView):
             return Response({"detail": "Укажите токен в параметрах ссылки"}, status=status.HTTP_404_NOT_FOUND), True
         patient = Patient.objects.filter(link_token=token).first()
         if patient is None:
-            return Response({"detail": "Пользователь уже активирован или не существует"}, status=status.HTTP_404_NOT_FOUND), True
+            return (
+                Response(
+                    {"detail": "Пользователь уже активирован или не существует"}, status=status.HTTP_404_NOT_FOUND
+                ),
+                True,
+            )
         return patient, False
 
     def get(self, request):
@@ -99,7 +104,8 @@ class ObjectHistory(APIView):
     def get(self, request, model, pk):
         if model not in self.allowed_models_for_history.keys():
             return Response(
-                {"status": "not ok", "error": "Данная модель не имеет истории изменений"}, status=status.HTTP_400_BAD_REQUEST
+                {"status": "not ok", "error": "Данная модель не имеет истории изменений"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         model_class = self.allowed_models_for_history[model]
