@@ -12,7 +12,7 @@ def send_email_activation(domain, user_email, email_token):
     activate_url = f'http://med-plaform.a.uenv.ru/verify/{email_token}/'
 
     email_subject = "Активируйте ваш аккаунт"
-    email_text = f"Пожалуйста, для активации вашего аккаунт, пройдите по ссылке \n{activate_url}"
+    email_text = f"Пожалуйста, для активации вашего аккаунта, пройдите по ссылке \n{activate_url}"
 
     email = EmailMessage(email_subject, email_text, settings.EMAIL_HOST_USER, [user_email])
 
