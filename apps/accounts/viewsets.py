@@ -62,7 +62,7 @@ class BaseForPatientView(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         request.data['user'].pop('email')
         serializer = self.get_serializer(data=self.rise_data(request.data))
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=False)
         user = serializer.validated_data.pop("user")
         patient_obj = get_object_or_404(Patient, id=serializer.validated_data.get("id"))
         user_obj = get_object_or_404(User, id=patient_obj.user.id)
