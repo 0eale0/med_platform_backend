@@ -71,12 +71,17 @@ class ActivateUserView(APIView):
             email_token = str(uuid4())
             try:
                 User.objects.filter(id=user.id).update(**serializer.validated_data["user"], is_active=False)
-                Patient.objects.filter(id=patient.id).update(**serializer.validated_data["patient"], link_token=email_token)
+                Patient.objects.filter(id=patient.id).update(
+                    **serializer.validated_data["patient"], link_token=email_token
+                )
                 user.refresh_from_db()
                 send_email_activation.delay(get_current_site(request).domain, user.email, user.patient.link_token)
                 return Response({"status": "ok"})
             except IntegrityError:
-                return Response({"status": "not ok", 'detail': 'Пользователь с таким email уже существует'}, status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"status": "not ok", 'detail': 'Пользователь с таким email уже существует'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
         return Response({"status": "not ok"}, status=status.HTTP_404_NOT_FOUND)
 
 
