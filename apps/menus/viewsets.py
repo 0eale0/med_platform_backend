@@ -144,16 +144,16 @@ class DishForPatient(viewsets.ModelViewSet):
     def get_or_create_dish(self, request):
         dish_id = request.data.get("dish_id")
         if dish_id:
-            dish = Dish.objects.get(dish_id)
+            dish = Dish.objects.get(id=dish_id)
             if not dish:
-                return Response({"status": "not ok", "error": "wrong dish_id"})
+                return Response({"status": "not ok", "error": "Неправильный id блюда"})
         else:
+            request.data["dish"]["user"] = request.user
             dish = Dish.objects.create(**request.data["dish"])
         return dish
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        request.data["dish"]["user"] = user
         dish = self.get_or_create_dish(request)
 
         today_date = datetime.date.today()
@@ -170,6 +170,7 @@ class DishForPatient(viewsets.ModelViewSet):
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
+        serializer.data.update({"time": time})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
