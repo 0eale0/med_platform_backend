@@ -21,7 +21,7 @@ class VerifyEmailView(APIView):
         user = patient.user
 
         if not user or user.is_active:
-            return HttpResponse("user already activated")
+            return HttpResponse("Пользователь уже активирован")
 
         patient.link_token = None
         patient.save()
@@ -39,10 +39,15 @@ class ActivateUserView(APIView):
     def get_patient_or_error(request):
         token = request.query_params.get('token')
         if not token:
-            return Response({"detail": "pass token in url params"}, status=status.HTTP_404_NOT_FOUND), True
+            return Response({"detail": "Укажите токен в параметрах ссылки"}, status=status.HTTP_404_NOT_FOUND), True
         patient = Patient.objects.filter(link_token=token).first()
         if patient is None:
-            return Response({"detail": "user already active or not created"}, status=status.HTTP_404_NOT_FOUND), True
+            return (
+                Response(
+                    {"detail": "Пользователь уже активирован или не существует"}, status=status.HTTP_404_NOT_FOUND
+                ),
+                True,
+            )
         return patient, False
 
     def get(self, request):
@@ -79,7 +84,7 @@ class WhoAmIView(APIView):
 
     def get(self, request):
         if request.user.is_anonymous:
-            return Response({"error": "login to view info"})
+            return Response({"error": "Войдите в аккаунт, чтобы увидеть информацию"})
         doctor = Doctor.objects.filter(user=request.user).first()
         patient = Patient.objects.filter(user=request.user).first()
         user_serialized = self.serializer_class(request.user).data
@@ -99,7 +104,8 @@ class ObjectHistory(APIView):
     def get(self, request, model, pk):
         if model not in self.allowed_models_for_history.keys():
             return Response(
-                {"status": "not ok", "error": "this model does not history"}, status=status.HTTP_400_BAD_REQUEST
+                {"status": "not ok", "error": "Данная модель не имеет истории изменений"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         model_class = self.allowed_models_for_history[model]
@@ -113,7 +119,7 @@ class ObjectHistory(APIView):
 
         if not object_to_check_history:
             return Response(
-                {"status": "not ok", "error": "this user does not exists"}, status=status.HTTP_400_BAD_REQUEST
+                {"status": "not ok", "error": "Такого пользователя нет в системе"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         dict_with_changes = get_dict_with_changes(object_to_check_history, self.MAX_COUNT_TO_RETURN, fields)
@@ -142,6 +148,6 @@ class GetDoctor(APIView):
 
     def get(self, request):
         if request.user.is_anonymous:
-            return Response({"error": "login to view info"})
+            return Response({"error": "Войдите в аккаунт, чтобы увидеть информацию"})
         contact_details = request.user.doctor.contact_details
         return Response({"contact": contact_details})
