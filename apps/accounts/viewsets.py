@@ -9,8 +9,7 @@ from rest_framework.response import Response
 from transliterate import translit
 
 from apps.accounts.models import Patient, User, Doctor
-from apps.accounts.serializers import BaseForPatientSerializer, UserSerializer, DoctorSerializer
-from apps.menus.serializers import MenuSerializer
+from apps.accounts.serializers import BaseForPatientSerializer, DoctorSerializer
 from apps.menus.models import Menu
 from apps.menus.permissions import IsDoctor, IsPatient, IsPersonalCabinetOwner
 

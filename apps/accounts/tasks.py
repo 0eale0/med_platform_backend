@@ -11,14 +11,14 @@ def send_email_activation(domain, user_email, email_token):
 
     activate_url = f'http://med-plaform.a.uenv.ru/verify/{email_token}/'
 
-    email_subject = "Activate you're account"
-    email_text = f"Please the link below to activate your account \n{activate_url}"
+    email_subject = "Активируйте ваш аккаунт"
+    email_text = f"Пожалуйста, для активации вашего аккаунт, пройдите по ссылке \n{activate_url}"
 
     email = EmailMessage(email_subject, email_text, settings.EMAIL_HOST_USER, [user_email])
 
     email.fail_silently = False
     email.send()
-    capture_message(f'send email with url {activate_url}')
+    capture_message(f'Отправлено письмо с ссылкой {activate_url}')
 
 
 @app.task()
