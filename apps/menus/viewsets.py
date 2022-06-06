@@ -146,7 +146,7 @@ class DishForPatient(viewsets.ModelViewSet):
         if dish_id:
             dish = Dish.objects.get(id=dish_id)
             if not dish:
-                return Response({"status": "not ok", "error": "wrong dish_id"})
+                return Response({"status": "not ok", "error": "Неправильный id блюда"})
         else:
             request.data["dish"]["user"] = request.user
             dish = Dish.objects.create(**request.data["dish"])

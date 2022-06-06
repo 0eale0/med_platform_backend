@@ -9,8 +9,7 @@ from rest_framework.response import Response
 from transliterate import translit
 
 from apps.accounts.models import Patient, User, Doctor
-from apps.accounts.serializers import BaseForPatientSerializer, UserSerializer, DoctorSerializer
-from apps.menus.serializers import MenuSerializer
+from apps.accounts.serializers import BaseForPatientSerializer, DoctorSerializer
 from apps.menus.models import Menu
 from apps.menus.permissions import IsDoctor, IsPatient, IsPersonalCabinetOwner
 
@@ -63,7 +62,7 @@ class BaseForPatientView(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         request.data['user'].pop('email')
         serializer = self.get_serializer(data=self.rise_data(request.data))
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=False)
         user = serializer.validated_data.pop("user")
         patient_obj = get_object_or_404(Patient, id=serializer.validated_data.get("id"))
         user_obj = get_object_or_404(User, id=patient_obj.user.id)
