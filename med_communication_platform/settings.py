@@ -34,7 +34,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru", '172.18.0.1', 'localhost']
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8080",
     "http://med-platform.a.uenv.ru",
@@ -75,7 +75,6 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
-    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = "med_communication_platform.urls"
@@ -150,7 +149,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = "ru-ru"
+LANGUAGE_CODE = "eu-eu"
 
 TIME_ZONE = "UTC"
 
