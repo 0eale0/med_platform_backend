@@ -116,7 +116,7 @@ class DishViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated & IsDoctor]
 
     def create(self, request, *args, **kwargs):
-        dish = Dish.objects.create(**request.data["dish"])
+        dish = Dish.objects.create(**request.data["dish"], is_for_all=True)
         ingredients = request.data["ingredients"]
 
         DishIngredient.objects.bulk_create(
