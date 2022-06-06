@@ -97,7 +97,9 @@ class ForPatientView(BaseForPatientView):
 class DoctorViewSet(viewsets.ModelViewSet):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
-    permissions = [IsPersonalCabinetOwner,]
+    permissions = [
+        IsPersonalCabinetOwner,
+    ]
 
     def create(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
