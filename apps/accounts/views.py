@@ -143,5 +143,5 @@ class GetDoctor(APIView):
     def get(self, request):
         if request.user.is_anonymous:
             return Response({"error": "login to view info"})
-        contact_details = request.user.doctor.contact_details
+        contact_details = request.user.patient.doctor.contact_details
         return Response({"contact": contact_details})
