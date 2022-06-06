@@ -100,7 +100,7 @@ class DoctorViewSet(viewsets.ModelViewSet):
     permissions = [IsPersonalCabinetOwner]
 
     def update(self, request, *args, **kwargs):
-        doctor = get_object_or_404(Doctor, user_id=request.user.id)
+        doctor = get_object_or_404(Doctor, user__id=request.user.id)
         doctor.contact_details = request.data["contact_details"]
         doctor.save()
         return Response({'contact_details': doctor.contact_details})
