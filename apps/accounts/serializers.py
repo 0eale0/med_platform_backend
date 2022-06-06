@@ -43,6 +43,7 @@ class ActivateUserSerializer(serializers.ModelSerializer):
 
 class DoctorSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
+    post = serializers.CharField(required=False)
 
     def get_user(self, obj):
         result = UserSerializer(User.objects.filter(id=obj.user.id).first()).data

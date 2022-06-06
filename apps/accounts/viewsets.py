@@ -62,7 +62,7 @@ class BaseForPatientView(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         request.data['user'].pop('email')
         serializer = self.get_serializer(data=self.rise_data(request.data))
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=False)
         user = serializer.validated_data.pop("user")
         patient_obj = get_object_or_404(Patient, id=serializer.validated_data.get("id"))
         user_obj = get_object_or_404(User, id=patient_obj.user.id)
@@ -100,7 +100,7 @@ class DoctorViewSet(viewsets.ModelViewSet):
     permissions = [IsPersonalCabinetOwner]
 
     def update(self, request, *args, **kwargs):
-        doctor = get_object_or_404(Doctor, user_id=request.user.id)
+        doctor = get_object_or_404(Doctor, user__id=request.user.id)
         doctor.contact_details = request.data["contact_details"]
         doctor.save()
         return Response({'contact_details': doctor.contact_details})
