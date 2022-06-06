@@ -97,6 +97,8 @@ class WhoAmIView(APIView):
         doctor = Doctor.objects.filter(user=request.user).first()
         patient = Patient.objects.filter(user=request.user).first()
         user_serialized = self.serializer_class(request.user).data
+        if request.user.doctor:
+            user_serialized["contact_details"] = request.user.doctor.contact_details
         user_serialized["is_doctor"] = bool(doctor)
         user_serialized["is_patient"] = bool(patient)
         user_serialized["patient_id"] = patient.pk if patient else None
