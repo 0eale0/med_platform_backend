@@ -29,8 +29,11 @@ class IsDoctor(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        if request.user.doctor:
-            return True
+        try:
+            if request.user.doctor:
+                return True
+        except Exception:
+            pass
 
 
 class IsPatient(permissions.BasePermission):
