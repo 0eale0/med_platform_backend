@@ -1,3 +1,4 @@
+import copy
 import datetime
 
 from django.db.models import Q
@@ -162,16 +163,16 @@ class DishForPatient(viewsets.ModelViewSet):
             day = Day.objects.create(date=datetime.date.today(), menu_id=menu_id)
 
         time = request.data.get("time")
-        if not time:
-            time = datetime.datetime.now()
 
         DayDish.objects.create(dish_amount=1, time=time, day=day, dish=dish)
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
-        serializer.data.update({"time": time})
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        serializer_data_copy = copy.deepcopy(serializer.data)
+        serializer_data_copy.update({"time": time + ':00'})
+
+        return Response(serializer_data_copy, status=status.HTTP_201_CREATED, headers=headers)
 
     def list(self, request, *args, **kwargs):
         user = request.user
