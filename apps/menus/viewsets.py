@@ -156,17 +156,16 @@ class DishForPatient(viewsets.ModelViewSet):
         user = request.user
         dish = self.get_or_create_dish(request)
 
-        today_date = datetime.date.today()
-        day = Day.objects.filter(date=today_date).first()
+        day = Day.objects.filter(id=request.data.get('day_id')).first()
         if not day:
             menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
-            day = Day.objects.create(date=today_date, menu_id=menu_id)
+            day = Day.objects.create(date=datetime.date.today(), menu_id=menu_id)
 
         time = request.data.get("time")
         if not time:
             time = datetime.datetime.now()
 
-        day_dish = DayDish.objects.create(dish_amount=1, time=time, day=day, dish=dish)
+        DayDish.objects.create(dish_amount=1, time=time, day=day, dish=dish)
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
@@ -267,8 +266,6 @@ class NewDayViewSet(viewsets.ModelViewSet):
             date=datetime.datetime.strptime(request.data["date"], '%Y-%m-%d').date()
         )
         day_dishes = DayDish.objects.filter(day=day)
-
-        print(day, day_dishes)
 
         data = {
             "day": serializers.DaySerializer(day).data,
