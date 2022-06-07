@@ -6,7 +6,7 @@ from med_communication_platform import settings
 from med_communication_platform.celery import app
 
 
-@app.task()
+# @app.task()
 def send_email_activation(domain, user_email, email_token):
 
     activate_url = f'http://med-plaform.a.uenv.ru/verify/{email_token}/'

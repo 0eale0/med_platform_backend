@@ -255,15 +255,27 @@ class NewDayViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        if request.data.get("menu_id"):
-            menu = Menu.objects.filter(id=request.data["menu_id"]).first()
+        if "patient_id" in request.data:
+            patient = Patient.objects.filter(id=request.data.get("patient_id")).first()
+            menu = Menu.objects.filter(id=patient.menu.id).first()
         else:
             menu = Menu.objects.filter(patient=request.user.patient).first()
 
-        day, new = Day.objects.get_or_create(menu=menu, done=False, date=request.data["date"])
+        day, new = Day.objects.get_or_create(
+            menu=menu,
+            done=False,
+            date=datetime.datetime.strptime(request.data["date"], '%Y-%m-%d').date()
+        )
+        day_dishes = DayDish.objects.filter(day=day)
 
-        serializer = serializers.DaySerializer(day)
-        headers = self.get_success_headers(serializer.data)
+        print(day, day_dishes)
+
+        data = {
+            "day": serializers.DaySerializer(day).data,
+            "day_dishes": DishListSerializer(day_dishes, many=True).data
+        }
+
         if new:
-            return Response({"is_created": "день создан", "data": serializer.data})
-        return Response({"data": serializer.data})
+            data["is_created"] = True
+
+        return Response(data)
