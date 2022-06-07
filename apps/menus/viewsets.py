@@ -237,3 +237,32 @@ class DishIngredientViewSet(viewsets.ModelViewSet):
     serializer_class = DishIngredientSerializer
     queryset = DishIngredient.objects.all()
     permission_classes = [IsAuthenticated & IsDoctor]
+
+
+class NewDayViewSet(viewsets.ModelViewSet):
+    serializer_class = DaySerializer
+    queryset = Day.objects.all()
+    permission_classes = [IsAuthenticated & IsOwnerOrReadOnlyDay]
+
+    @action(methods=['GET'], detail=False)
+    def get_day_by_data(self, request, *args, **kwargs):
+        patient = get_patient(request)
+        day = Day.objects.filter(menu__patient=patient, date=request.data.get("date"))
+
+        serializer = serializers.DaySerializer(day)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        if request.data.get("menu_id"):
+            menu = Menu.objects.filter(id=request.data["menu_id"]).first()
+        else:
+            menu = Menu.objects.filter(patient=request.user.patient).first()
+
+        day, new = Day.objects.get_or_create(menu=menu, done=False, date=request.data["date"])
+
+        serializer = serializers.DaySerializer(day)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response({"status": "день создан"})
