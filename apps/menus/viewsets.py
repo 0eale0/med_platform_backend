@@ -156,17 +156,16 @@ class DishForPatient(viewsets.ModelViewSet):
         user = request.user
         dish = self.get_or_create_dish(request)
 
-        today_date = datetime.date.today()
-        day = Day.objects.filter(date=today_date).first()
+        day = Day.objects.filter(id=request.data.get('day_id')).first()
         if not day:
             menu_id = Patient.objects.filter(user=user.pk).first().menu.pk
-            day = Day.objects.create(date=today_date, menu_id=menu_id)
+            day = Day.objects.create(date=datetime.date.today(), menu_id=menu_id)
 
         time = request.data.get("time")
         if not time:
             time = datetime.datetime.now()
 
-        day_dish = DayDish.objects.create(dish_amount=1, time=time, day=day, dish=dish)
+        DayDish.objects.create(dish_amount=1, time=time, day=day, dish=dish)
 
         serializer = serializers.DishSerializer(dish)
         headers = self.get_success_headers(serializer.data)
@@ -255,15 +254,25 @@ class NewDayViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        if request.data.get("menu_id"):
-            menu = Menu.objects.filter(patient__id=request.data["patient_id"]).first()
+        if "patient_id" in request.data:
+            patient = Patient.objects.filter(id=request.data.get("patient_id")).first()
+            menu = Menu.objects.filter(id=patient.menu.id).first()
         else:
             menu = Menu.objects.filter(patient=request.user.patient).first()
 
-        day, new = Day.objects.get_or_create(menu=menu, done=False, date=request.data["date"])
+        day, new = Day.objects.get_or_create(
+            menu=menu,
+            done=False,
+            date=datetime.datetime.strptime(request.data["date"], '%Y-%m-%d').date()
+        )
+        day_dishes = DayDish.objects.filter(day=day)
 
-        serializer = serializers.DaySerializer(day)
-        headers = self.get_success_headers(serializer.data)
+        data = {
+            "day": serializers.DaySerializer(day).data,
+            "day_dishes": DishListSerializer(day_dishes, many=True).data
+        }
+
         if new:
-            return Response({"is_created": "день создан", "data": serializer.data})
-        return Response({"data": serializer.data})
+            data["is_created"] = True
+
+        return Response(data)

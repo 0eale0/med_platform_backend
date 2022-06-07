@@ -75,7 +75,7 @@ class ActivateUserView(APIView):
                     **serializer.validated_data["patient"], link_token=email_token
                 )
                 user.refresh_from_db()
-                send_email_activation.delay(get_current_site(request).domain, user.email, user.patient.link_token)
+                send_email_activation(get_current_site(request).domain, user.email, user.patient.link_token)
                 return Response({"status": "ok"})
             except IntegrityError:
                 return Response(
