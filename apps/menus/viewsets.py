@@ -247,7 +247,7 @@ class NewDayViewSet(viewsets.ModelViewSet):
     @action(methods=['GET'], detail=False)
     def get_day_by_data(self, request, *args, **kwargs):
         patient = get_patient(request)
-        day = Day.objects.filter(menu__patient=patient, date=request.data.get("date"))
+        day = Day.objects.filter(menu__patient=patient, date=request.data.get("date")).first()
 
         serializer = serializers.DaySerializer(day)
         headers = self.get_success_headers(serializer.data)
