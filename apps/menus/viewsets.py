@@ -261,15 +261,13 @@ class NewDayViewSet(viewsets.ModelViewSet):
             menu = Menu.objects.filter(patient=request.user.patient).first()
 
         day, new = Day.objects.get_or_create(
-            menu=menu,
-            done=False,
-            date=datetime.datetime.strptime(request.data["date"], '%Y-%m-%d').date()
+            menu=menu, done=False, date=datetime.datetime.strptime(request.data["date"], '%Y-%m-%d').date()
         )
         day_dishes = DayDish.objects.filter(day=day)
 
         data = {
             "day": serializers.DaySerializer(day).data,
-            "day_dishes": DishListSerializer(day_dishes, many=True).data
+            "day_dishes": DishListSerializer(day_dishes, many=True).data,
         }
 
         if new:
