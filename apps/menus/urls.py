@@ -7,7 +7,8 @@ from apps.menus.viewsets import (
     DishViewSet,
     DayDishViewSet,
     DishIngredientViewSet,
-    DishForPatient, NewDayViewSet,
+    DishForPatient,
+    NewDayViewSet,
 )
 
 router = routers.SimpleRouter()
