@@ -256,7 +256,7 @@ class NewDayViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         if request.data.get("menu_id"):
-            menu = Menu.objects.filter(id=request.data["menu_id"]).first()
+            menu = Menu.objects.filter(patient__id=request.data["patient_id"]).first()
         else:
             menu = Menu.objects.filter(patient=request.user.patient).first()
 
