@@ -3,7 +3,7 @@ import datetime
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -192,7 +192,9 @@ class DishForPatient(viewsets.ModelViewSet):
 class DayDishViewSet(viewsets.ModelViewSet):
     serializer_class = DayDishSerializer
     queryset = DayDish.objects.all()
-    permission_classes = [IsDoctor | IsDayOwner]
+    permission_classes = [
+        permissions.AllowAny,
+    ]
 
     def create(self, request, *args, **kwargs):
         hours, minutes, *_ = list(map(int, request.data["time"].split(":")))
