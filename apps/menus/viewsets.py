@@ -264,5 +264,6 @@ class NewDayViewSet(viewsets.ModelViewSet):
 
         serializer = serializers.DaySerializer(day)
         headers = self.get_success_headers(serializer.data)
-
-        return Response({"status": "день создан"})
+        if new:
+            return Response({"is_created": "день создан", "data": serializer.data})
+        return Response({"data": serializer.data})
