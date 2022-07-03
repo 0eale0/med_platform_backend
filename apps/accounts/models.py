@@ -45,7 +45,6 @@ class Patient(models.Model):
     medical_card_number = models.CharField(max_length=255, **NULLABLE)
     insurance_policy_number = models.CharField(max_length=100, **NULLABLE)
     birth_date = models.DateField(**NULLABLE)
-    link_token = models.CharField(max_length=100, **NULLABLE)
     sex = models.CharField(max_length=6, choices=[("male", "male"), ("female", "female")], **NULLABLE)
     activity_level = models.CharField(max_length=255, **NULLABLE)
     weight = models.FloatField(**NULLABLE)
@@ -60,6 +59,9 @@ class Patient(models.Model):
     protein = models.IntegerField(**NULLABLE)
     fat = models.IntegerField(**NULLABLE)
     carbohydrate = models.IntegerField(**NULLABLE)
+
+    user_activate_token = models.CharField(max_length=100, **NULLABLE)
+    password_reset_token = models.CharField(max_length=100, **NULLABLE)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, **NULLABLE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, **NULLABLE)

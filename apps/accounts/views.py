@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
 from django.db import IntegrityError
 from django.http import HttpResponse
 from rest_framework import permissions, status
@@ -8,8 +8,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.accounts.models import Patient, User, Doctor
-from apps.accounts.serializers import ActivateUserSerializer, UserSerializer
-from apps.accounts.tasks import send_email_activation, test
+from apps.accounts.serializers import ActivateUserSerializer, UserSerializer, ResetPasswordSerializer, \
+    SendEmailResetPasswordSerializer
+from utils.emails import send_activate_user_email, send_reset_password_email
 from utils.functions import get_dict_with_changes
 from apps.menus.permissions import IsDoctor, IsPatient, PatientDoctorOrPatient
 
@@ -32,6 +33,67 @@ class VerifyEmailView(APIView):
         return Response({"status": "ok"})
 
 
+class SendEmailResetPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = SendEmailResetPasswordSerializer
+
+    def post(self, request):
+        email = request.data.get('email')
+        user = User.objects.filter(email=email).first()
+        patient = Patient.objects.filter(user=user.pk).first()
+
+        if not user:
+            return Response({"detail": "Пользователя с такой электронной почтой не существует"},
+                            status=status.HTTP_404_NOT_FOUND), True
+
+        password_reset_token = str(uuid4())
+        patient.password_reset_token = password_reset_token
+        patient.save()
+
+        domain = request.build_absolute_uri('/')[:-1].strip("/")
+
+        send_reset_password_email(domain, user.email, password_reset_token)
+
+        return Response({"status": "ok"})
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ResetPasswordSerializer
+
+    @staticmethod
+    def get_patient_or_error(token):
+        patient = Patient.objects.filter(password_reset_token=token).first()
+        if patient is None:
+            return (
+                Response(
+                    {"detail": "Ссылка более недействительна"}, status=status.HTTP_404_NOT_FOUND
+                ),
+                True,
+            )
+        return patient, False
+
+    def post(self, request, token):
+        patient, error = self.get_patient_or_error(token)
+        if error:
+            return patient
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=False):
+            password = serializer.validated_data.pop("password")
+
+            patient.password_reset_token = None
+            patient.save()
+
+            user = patient.user
+            user.set_password(password)
+            user.save()
+
+            return Response({"status": "ok"})
+
+        return Response({"status": "not ok"})
+
+
 class ActivateUserView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ActivateUserSerializer
@@ -50,6 +112,7 @@ class ActivateUserView(APIView):
                 True,
             )
         return patient, False
+
 
     def get(self, request):
         patient, error = self.get_patient_or_error(request)
@@ -72,10 +135,12 @@ class ActivateUserView(APIView):
             try:
                 User.objects.filter(id=user.id).update(**serializer.validated_data["user"], is_active=False)
                 Patient.objects.filter(id=patient.id).update(
-                    **serializer.validated_data["patient"], link_token=email_token
+                    **serializer.validated_data["patient"], user_activate_token=email_token
                 )
                 user.refresh_from_db()
-                send_email_activation(get_current_site(request).domain, user.email, user.patient.link_token)
+
+                domain = request.build_absolute_uri('/')[:-1].strip("/")
+                send_activate_user_email(domain, user.email, user.patient.user_activate_token)
                 return Response({"status": "ok"})
             except IntegrityError:
                 return Response(
@@ -92,6 +157,8 @@ class WhoAmIView(APIView):
     serializer_class = UserSerializer
 
     def get(self, request):
+        send_reset_password_email("hh.ru", "ff@mail.ru", "dadsas")
+
         if request.user.is_anonymous:
             return Response({"error": "Войдите в аккаунт, чтобы увидеть информацию"})
         doctor = Doctor.objects.filter(user=request.user).first()
@@ -102,6 +169,7 @@ class WhoAmIView(APIView):
         user_serialized["is_doctor"] = bool(doctor)
         user_serialized["is_patient"] = bool(patient)
         user_serialized["patient_id"] = patient.pk if patient else None
+
         return Response(user_serialized)
 
 

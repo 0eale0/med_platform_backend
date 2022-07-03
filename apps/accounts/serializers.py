@@ -41,6 +41,12 @@ class ActivateUserSerializer(serializers.ModelSerializer):
         fields = ["user", "patient"]
 
 
+class SendEmailResetPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email"]
+
+
 class DoctorSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     post = serializers.CharField(required=False)
@@ -53,3 +59,10 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ['user', 'post', 'contact_details']
+
+
+class ResetPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["password"]
+        write_only_fields = ["password"]

@@ -1,4 +1,5 @@
 from datetime import datetime, date
+
 from sentry_sdk import capture_exception
 
 CONSTANTS_FOR_MALE_OR_FEMALE = {'male': [66.5, 13.75, 5.003, 6.775], 'female': [655.1, 9.563, 1.85, 4.676]}
