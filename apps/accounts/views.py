@@ -19,13 +19,13 @@ class VerifyEmailView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, token):
-        patient = Patient.objects.get(link_token=token)
+        patient = Patient.objects.get(user_activate_token=token)
         user = patient.user
 
         if not user or user.is_active:
             return HttpResponse("Пользователь уже активирован")
 
-        patient.link_token = None
+        patient.user_activate_token = None
         patient.save()
         user.is_active = True
         user.save()
@@ -103,7 +103,7 @@ class ActivateUserView(APIView):
         token = request.query_params.get('token')
         if not token:
             return Response({"detail": "Укажите токен в параметрах ссылки"}, status=status.HTTP_404_NOT_FOUND), True
-        patient = Patient.objects.filter(link_token=token).first()
+        patient = Patient.objects.filter(user_activate_token=token).first()
         if patient is None:
             return (
                 Response(
