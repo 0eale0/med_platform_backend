@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    env_file: .env
+    environment:
+      REDIS_URL: $REDIS_URL
+
+      EMAIL_HOST: $EMAIL_HOST
+      EMAIL_HOST_USER: $EMAIL_HOST
+      EMAIL_HOST_PASSWORD: $EMAIL_HOST_PASSWORD
+      EMAIL_USE_TLS: $EMAIL_USE_TLS
+      EMAIL_PORT: $EMAIL_PORT
+      SERVER_EMAIL: $SERVER_EMAIL
+      DEFAULT_FROM_EMAIL: $DEFAULT_FROM_EMAIL
+    restart: always
+
+  db:
+    image: postgres:11.1-alpine
+    env_file: .env
+    environment:
+      DB_NAME: $DB_NAME
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+
+    volumes:
+      - db:/var/lib/postgresql/data
+    restart: always
+
+
+volumes:
+  db:
