@@ -65,7 +65,7 @@ class ActivateUserView(APIView):
 
         user = User.objects.filter(patient=patient).first()
         serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid(raise_exception=False):
+        if serializer.is_valid(raise_exception=True):
             user.set_password(serializer.validated_data["user"].pop("password"))
             user.save()
             email_token = str(uuid4())

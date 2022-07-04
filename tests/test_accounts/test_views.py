@@ -42,3 +42,32 @@ class TestWhoAmI(InitUsers):
         await_result = {'error': 'login to view info'}
 
         assert response_result == await_result
+
+
+class TestActivateUserView(InitUsers):
+    def test_user_activate(self):
+        token = "token"
+
+        patient = self.patient1
+        patient.link_token = token
+        patient.user.is_active = False
+        patient.user.save()
+        patient.save()
+
+        url = f'/api/accounts/activate/?token={token}'
+        data = {"user": {"email": patient.user.email, "password": "123"}, "patient": {}}
+
+        response = self.anonymous_user.post(url, data=data, format="json")
+
+        assert response.status_code == 200
+
+        patient.refresh_from_db()
+        new_token = patient.link_token
+
+        url = f"/api/accounts/VerifyEmail/{new_token}/"
+
+        response = self.anonymous_user.get(url)
+
+        patient.refresh_from_db()
+
+        assert patient.user.is_active == True

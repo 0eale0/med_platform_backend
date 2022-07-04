@@ -18,6 +18,7 @@ def send_email_activation(domain, user_email, email_token):
 
     email.fail_silently = False
     email.send()
+
     capture_message(f'Отправлено письмо с ссылкой {activate_url}')
 
 
