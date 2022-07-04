@@ -8,8 +8,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.accounts.models import Patient, User, Doctor
-from apps.accounts.serializers import ActivateUserSerializer, UserSerializer, ResetPasswordSerializer, \
-    SendEmailResetPasswordSerializer
+from apps.accounts.serializers import (
+    ActivateUserSerializer,
+    UserSerializer,
+    ResetPasswordSerializer,
+    SendEmailResetPasswordSerializer,
+)
 from utils.emails import send_activate_user_email, send_reset_password_email
 from utils.functions import get_dict_with_changes
 from apps.menus.permissions import IsDoctor, IsPatient, PatientDoctorOrPatient
@@ -19,13 +23,13 @@ class VerifyEmailView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, token):
-        patient = Patient.objects.get(link_token=token)
+        patient = Patient.objects.get(user_activate_token=token)
         user = patient.user
 
         if not user or user.is_active:
             return HttpResponse("Пользователь уже активирован")
 
-        patient.link_token = None
+        patient.user_activate_token = None
         patient.save()
         user.is_active = True
         user.save()
@@ -43,8 +47,13 @@ class SendEmailResetPasswordView(APIView):
         patient = Patient.objects.filter(user=user.pk).first()
 
         if not user:
-            return Response({"detail": "Пользователя с такой электронной почтой не существует"},
-                            status=status.HTTP_404_NOT_FOUND), True
+            return (
+                Response(
+                    {"detail": "Пользователя с такой электронной почтой не существует"},
+                    status=status.HTTP_404_NOT_FOUND,
+                ),
+                True,
+            )
 
         password_reset_token = str(uuid4())
         patient.password_reset_token = password_reset_token
@@ -66,9 +75,7 @@ class ResetPasswordView(APIView):
         patient = Patient.objects.filter(password_reset_token=token).first()
         if patient is None:
             return (
-                Response(
-                    {"detail": "Ссылка более недействительна"}, status=status.HTTP_404_NOT_FOUND
-                ),
+                Response({"detail": "Ссылка более недействительна"}, status=status.HTTP_404_NOT_FOUND),
                 True,
             )
         return patient, False
@@ -103,7 +110,7 @@ class ActivateUserView(APIView):
         token = request.query_params.get('token')
         if not token:
             return Response({"detail": "Укажите токен в параметрах ссылки"}, status=status.HTTP_404_NOT_FOUND), True
-        patient = Patient.objects.filter(link_token=token).first()
+        patient = Patient.objects.filter(user_activate_token=token).first()
         if patient is None:
             return (
                 Response(
@@ -112,7 +119,6 @@ class ActivateUserView(APIView):
                 True,
             )
         return patient, False
-
 
     def get(self, request):
         patient, error = self.get_patient_or_error(request)

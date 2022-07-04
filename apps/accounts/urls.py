@@ -2,8 +2,16 @@ from django.urls import path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from apps.accounts.views import ActivateUserView, WhoAmIView, VerifyEmailView, ObjectHistory, CalculateCPFC, GetDoctor, \
-    ResetPasswordView, SendEmailResetPasswordView
+from apps.accounts.views import (
+    ActivateUserView,
+    WhoAmIView,
+    VerifyEmailView,
+    ObjectHistory,
+    CalculateCPFC,
+    GetDoctor,
+    ResetPasswordView,
+    SendEmailResetPasswordView,
+)
 from apps.accounts.viewsets import PatientViewForDoctor, DoctorViewSet
 
 router = routers.SimpleRouter()
@@ -21,5 +29,5 @@ urlpatterns = [
     path(r"api/accounts/calculatecpfc/<pk>/", CalculateCPFC.as_view()),
     path(r"api/accounts/get_doctor/", GetDoctor.as_view()),
     path(r"api/accounts/ResetPassword/<token>/", ResetPasswordView.as_view(), name="ResetPassword"),
-    path(r"api/accounts/SendEmailResetPassword/", SendEmailResetPasswordView.as_view())
+    path(r"api/accounts/SendEmailResetPassword/", SendEmailResetPasswordView.as_view()),
 ]
