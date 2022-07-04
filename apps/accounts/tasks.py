@@ -1,8 +1,7 @@
 from django.core.mail import EmailMessage
-from django.urls import reverse
 from sentry_sdk import capture_message
 
-from med_communication_platform import settings
+from django.conf import settings
 from med_communication_platform.celery import app
 
 
