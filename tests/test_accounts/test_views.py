@@ -74,7 +74,6 @@ class TestActivateUser(InitUsers):
 
 
 class TestResetPassword(InitUsers):
-
     def test_reset_password(self):
         patient = self.patient1
         start_password = patient.user.password
