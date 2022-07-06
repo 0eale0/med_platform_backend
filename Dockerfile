@@ -1,18 +1,18 @@
-FROM python:3.8-slim
+FROM python:3.8
 
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /backend
-COPY requirements.txt .
-RUN pip install -r requirements.txt
 
+COPY requirements.txt .
+RUN pip install -r requirements.txt && poetry config virtualenvs.create false
+
+WORKDIR /backend
 COPY pyproject.toml .
 COPY poetry.lock .
-COPY .pre-commit-config.yaml .
 RUN poetry install
-RUN pre-commit install
 
 COPY . .
 
 EXPOSE 8000
 
+CMD python manage.py migrate && python manage.py runserver
