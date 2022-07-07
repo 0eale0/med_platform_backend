@@ -37,7 +37,7 @@ build:
   tags:
     - med_platform
   only:
-  	- feature/docker
+    - feature/docker
 
 deploy_linux:
   stage: deploy
@@ -48,7 +48,7 @@ deploy_linux:
   tags:
     - med_platform
   only:
-  	- feature/docker
+    - feature/docker
 
 deploy:
   stage: deploy_old
