@@ -3,6 +3,7 @@ image: python:3.8.12
 stages:
   - lint
   - tests
+  - build
   - deploy
 
 lint:
@@ -28,8 +29,29 @@ run_tests:
       coverage_report:
         coverage_format: cobertura
         path: coverage.xml
-deploy:
+
+build:
+  stage: build
+  script:
+    - docker-compose -f docker-compose.prod.yml build
+  tags:
+    - med_platform
+  only:
+  	- feature/docker
+
+deploy_linux:
   stage: deploy
+  script:
+    - docker-compose -f docker-compose.prod.yml stop
+    - docker-compose -f docker-compose.prod.yml rm -f
+    - docker-compose -f docker-compose.prod.yml up -d
+  tags:
+    - med_platform
+  only:
+  	- feature/docker
+
+deploy:
+  stage: deploy_old
   script:
     # Скрипт сборки указан внутри системы и
     # никаких дополнительных настроек не требуется
