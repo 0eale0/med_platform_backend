@@ -18,7 +18,7 @@ run_tests:
   script:
     - docker-compose -f docker-compose.test.yml -d
   after_script:
-      - docker-compose down
+      - docker-compose -f docker-compose.test.yml down
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     reports:
