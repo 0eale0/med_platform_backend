@@ -15,6 +15,7 @@ lint:
 run_tests:
   stage: tests
   script:
+    - pip install docker-compose
     - docker-compose -f docker-compose.test.yml up -d
     - pip install pytest pytest-cov
     - coverage run -m pytest
