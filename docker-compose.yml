@@ -17,7 +17,7 @@ services:
   db:
     image: postgres:12-alpine
     environment:
-      POSTGRES_NAME: $DB_NAME
+      POSTGRES_DB: $DB_NAME
       POSTGRES_PASSWORD: $DB_PASSWORD
       POSTGRES_USER: $DB_USER
     networks:
