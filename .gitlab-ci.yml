@@ -2,6 +2,7 @@ image: python:3.8.12
 
 stages:
   - lint
+  - tests
   - deploy
 
 lint:
@@ -11,6 +12,19 @@ lint:
     - pip install black==21.7b0
     - black . --check --diff
 
+run_tests:
+  stage: tests
+  image: docker/compose:latest
+  script:
+    - docker-compose -f docker-compose.test.yml -d
+  after_script:
+      - docker-compose down
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
 deploy:
   stage: deploy
   script:
