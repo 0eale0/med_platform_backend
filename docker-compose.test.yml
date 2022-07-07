@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: testing-Dockerfile
+      dockerfile: Dockerfile
     depends_on:
       - db
       - redis

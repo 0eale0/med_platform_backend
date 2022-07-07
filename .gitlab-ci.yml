@@ -14,9 +14,13 @@ lint:
 
 run_tests:
   stage: tests
-  image: docker/compose:latest
+  image: python:3
   script:
+    - pip install docker-compose
     - docker-compose -f docker-compose.test.yml -d
+    - pip install pytest pytest-cov
+    - coverage report
+    - coverage xml
   after_script:
       - docker-compose -f docker-compose.test.yml down
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
