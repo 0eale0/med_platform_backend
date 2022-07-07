@@ -38,16 +38,16 @@ services:
     volumes:
       - redis:/data
     restart: always
-    env_file:
-      - .env
+    environment:
+      REDIS_URL: redis://172.17.0.2:6379/0
     expose:
       - 6379
 
   celery:
     build:
       context: .
-    env_file:
-      - .env
+    environment:
+      REDIS_URL: redis://172.17.0.2:6379/0
     depends_on:
       - redis
       - app
