@@ -50,18 +50,18 @@ deploy_linux:
   only:
     - feature/docker
 
-deploy:
-  stage: deploy_old
-  script:
-    # Скрипт сборки указан внутри системы и
-    # никаких дополнительных настроек не требуется
-    - echo
-  tags:
-    - a.uenv.ru
-    - unienv_deploy
-  environment:
-    name: UniEnv
-    url: http://a.uenv.ru
-  only:
-    variables:
-      - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+# deploy:
+#   stage: deploy
+#   script:
+#     # Скрипт сборки указан внутри системы и
+#     # никаких дополнительных настроек не требуется
+#     - echo
+#   tags:
+#     - a.uenv.ru
+#     - unienv_deploy
+#   environment:
+#     name: UniEnv
+#     url: http://a.uenv.ru
+#   only:
+#     variables:
+#       - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
