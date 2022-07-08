@@ -1,35 +1,35 @@
 image: python:3.9
 
 stages:
-  - lint
-  - tests
+#  - lint
+#  - tests
   - build
   - deploy
 
-lint:
-  stage: lint
-  script:
-    - pip install click==8.0.1
-    - pip install black==21.7b0
-    - black . --check --diff
-
-run_tests:
-  stage: tests
-  script:
-    - pip install docker-compose
-    - pip install docker
-    - docker-compose -f docker-compose.test.yml up -d
-    - docker exec coverage run -m pytest
-    - docker exec coverage report
-    - docker exec coverage xml
-  after_script:
-      - docker-compose -f docker-compose.test.yml down
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
+#lint:
+#  stage: lint
+#  script:
+#    - pip install click==8.0.1
+#    - pip install black==21.7b0
+#    - black . --check --diff
+#
+#run_tests:
+#  stage: tests
+#  script:
+#    - pip install docker-compose
+#    - pip install docker
+#    - docker-compose -f docker-compose.test.yml up -d
+#    - docker exec coverage run -m pytest
+#    - docker exec coverage report
+#    - docker exec coverage xml
+#  after_script:
+#      - docker-compose -f docker-compose.test.yml down
+#  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+#  artifacts:
+#    reports:
+#      coverage_report:
+#        coverage_format: cobertura
+#        path: coverage.xml
 
 build:
   stage: build
