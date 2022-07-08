@@ -37,7 +37,6 @@ stages:
 build:
   stage: build
   script:
-    - cp $ENV_FILE .env
     - docker-compose -f docker-compose.prod.yml build
   tags:
     - med_platform
@@ -47,7 +46,6 @@ build:
 deploy_linux:
   stage: deploy
   script:
-    - cp $ENV_FILE .env
     - docker-compose -f docker-compose.prod.yml stop
     - docker-compose -f docker-compose.prod.yml rm -f
     - docker-compose -f docker-compose.prod.yml up -d
