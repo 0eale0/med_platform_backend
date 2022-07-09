@@ -9,9 +9,9 @@ services:
       - db
       - redis
     environment:
-      DB_NAME: med
-      DB_USER: med
-      DB_PASSWORD: med
+      DB_NAME: med_backend
+      DB_USER: postgres
+      DB_PASSWORD: 123
       DB_HOST: db
       EMAIL_HOST: ${EMAIL_HOST}
 
@@ -24,9 +24,9 @@ services:
   db:
     image: postgres:12-alpine
     environment:
-      POSTGRES_NAME: med
-      POSTGRES_PASSWORD: med
-      POSTGRES_USER: med
+      POSTGRES_DB: med_backend
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: postgres
     networks:
       - backend
     volumes:
