@@ -38,7 +38,6 @@ build:
   stage: build
   script:
     - echo $ENV_FILE_FOR_PROD
-    - cp $ENV_FILE_FOR_PROD .env
     - docker-compose -f docker-compose.prod.yml build
   tags:
     - med_platform
