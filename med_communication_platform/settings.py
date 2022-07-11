@@ -41,7 +41,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://med-plaform.a.uenv.ru",
     "http://172.18.0.1:5000",
     "http://localhost:3000",
-    "http://84.252.137.193:8000"
+    "http://84.252.137.193:8000",
 ]
 # Application definition
 
