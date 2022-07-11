@@ -1,6 +1,7 @@
 [run]
 branch = True
-source = .
+omit = *migrations*, tests/*
+plugins = django_coverage_plugin
 
 [xml]
 directory = coverage
