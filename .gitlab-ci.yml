@@ -15,21 +15,21 @@ lint:
 
 run_tests:
   stage: tests
+  image: atnartur/docker:latest
   script:
-    - pip install docker-compose
-    - pip install docker
-    - docker-compose -f docker-compose.test.yml up -d
-    - docker exec coverage run -m pytest
-    - docker exec coverage report
-    - docker exec coverage xml
+    - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} build
+    - >
+      docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA}
+      run app /bin/bash -c "wait-for-it.sh db:5432 && python manage.py migrate && pytest"
+
   after_script:
-      - docker-compose -f docker-compose.test.yml down
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
+      - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} down -v
+#  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+#  artifacts:
+#    reports:
+#      coverage_report:
+#        coverage_format: cobertura
+#        path: coverage.xml
 
 build:
   stage: build
