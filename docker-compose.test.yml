@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_NAME: test
+      DB_PASSWORD: test
+      DB_USER: test
+      REDIS_URL: redis://172.17.0.2:6379/0
+      EMAIL_HOST: smtp.gmail.com
+      EMAIL_HOST_USER: test@gmail.com
+      EMAIL_HOST_PASSWORD: test
+      EMAIL_USE_TLS: 'True'
+      EMAIL_PORT: 587
+      SERVER_EMAIL: test@gmail.com
+      DEFAULT_FROM_EMAIL: test@gmail.com
+    restart: always
+
+  db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    volumes:
+      - db:/var/lib/postgresql/data
+    restart: always
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - redis:/data
+    restart: always
+    environment:
+      REDIS_URL: redis://172.17.0.2:6379/0
+    expose:
+      - 6379
+
+  celery:
+    build:
+      context: .
+    environment:
+      REDIS_URL: redis://172.17.0.2:6379/0
+    depends_on:
+      - redis
+      - app
+    command: celery -A med_communication_platform worker -l INFO
+
+volumes:
+  db:
+  redis:

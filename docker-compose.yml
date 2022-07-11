@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    networks:
+      - backend
+    restart: always
+
+  db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_DB: $DB_NAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_USER: $DB_USER
+    networks:
+      - backend
+    volumes:
+      - db:/var/lib/postgresql/data3b
+    restart: always
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - redis:/data
+    restart: always
+    networks:
+      - backend
+    env_file:
+      - .env
+    expose:
+      - 6379
+
+  celery:
+    build:
+      context: .
+    env_file:
+      - .env
+    networks:
+      - backend
+    depends_on:
+      - redis
+      - app
+    command: celery -A med_communication_platform worker -l INFO
+
+volumes:
+  db:
+  redis:
+
+networks:
+  backend:
+    driver: bridge
