@@ -10,6 +10,7 @@ stages:
   - deploy_yandex
 
 lint:
+  image: python:3.8.12
   stage: lint
   script:
     - pip install click==8.0.1
