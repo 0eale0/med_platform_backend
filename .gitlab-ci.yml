@@ -4,35 +4,17 @@ services:
 - docker:dind
 
 stages:
-#  - lint
-#  - tests
+  - lint
+  - deploy_unienv
   - build
-  - deploy
+  - deploy_yandex
 
-#lint:
-#  stage: lint
-#  script:
-#    - pip install click==8.0.1
-#    - pip install black==21.7b0
-#    - black . --check --diff
-#
-#run_tests:
-#  stage: tests
-#  script:
-#    - pip install docker-compose
-#    - pip install docker
-#    - docker-compose -f docker-compose.test.yml up -d
-#    - docker exec coverage run -m pytest
-#    - docker exec coverage report
-#    - docker exec coverage xml
-#  after_script:
-#      - docker-compose -f docker-compose.test.yml down
-#  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-#  artifacts:
-#    reports:
-#      coverage_report:
-#        coverage_format: cobertura
-#        path: coverage.xml
+lint:
+  stage: lint
+  script:
+    - pip install click==8.0.1
+    - pip install black==21.7b0
+    - black . --check --diff
 
 build:
   stage: build
@@ -42,10 +24,10 @@ build:
   tags:
     - med_platform
   only:
-    - deploy_yandex
+    - develop
 
 deploy_linux:
-  stage: deploy
+  stage: deploy_yandex
   script:
     - docker-compose -f docker-compose.prod.yml stop
     - docker-compose -f docker-compose.prod.yml rm -f
@@ -53,20 +35,20 @@ deploy_linux:
   tags:
     - med_platform
   only:
-    - deploy_yandex
+    - develop
 
-# deploy:
-#   stage: deploy
-#   script:
-#     # Скрипт сборки указан внутри системы и
-#     # никаких дополнительных настроек не требуется
-#     - echo
-#   tags:
-#     - a.uenv.ru
-#     - unienv_deploy
-#   environment:
-#     name: UniEnv
-#     url: http://a.uenv.ru
-#   only:
-#     variables:
-#       - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+deploy:
+   stage: deploy_unienv
+   script:
+     # Скрипт сборки указан внутри системы и
+     # никаких дополнительных настроек не требуется
+     - echo
+   tags:
+     - a.uenv.ru
+     - unienv_deploy
+   environment:
+     name: UniEnv
+     url: http://a.uenv.ru
+   only:
+     variables:
+       - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
