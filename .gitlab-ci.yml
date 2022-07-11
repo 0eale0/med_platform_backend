@@ -20,7 +20,7 @@ run_tests:
     - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} build
     - >
       docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA}
-      run app /bin/bash -c "deploy/wait-for-it.sh db:5432 && python manage.py migrate && coverage run -m pytest && coverage report && coverage xml"
+      run app /bin/bash -c "wait-for-it.sh db:5432 && python manage.py migrate && coverage run -m pytest && coverage report && coverage xml"
   after_script:
       - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} down -v
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
