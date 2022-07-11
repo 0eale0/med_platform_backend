@@ -3,15 +3,15 @@ FROM python:3.8
 ENV PYTHONUNBUFFERED 1
 
 
-COPY requirements.txt .
+COPY ../requirements.txt .
 RUN pip install -r requirements.txt && poetry config virtualenvs.create false
 
 WORKDIR /backend
-COPY pyproject.toml .
-COPY poetry.lock .
+COPY ../pyproject.toml .
+COPY ../poetry.lock .
 RUN poetry install
 
-COPY . .
+COPY .. .
 
 EXPOSE 8000
 
