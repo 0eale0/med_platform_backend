@@ -2,5 +2,5 @@
 branch = True
 source = .
 
-[html]
+[xml]
 directory = coverage
