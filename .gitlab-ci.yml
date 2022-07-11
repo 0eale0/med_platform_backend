@@ -5,7 +5,7 @@ services:
 
 stages:
   - lint
-  - deploy_unienv
+  # - deploy_unienv
   - build
   - deploy_yandex
 
@@ -18,22 +18,22 @@ lint:
     - black . --check --diff
 
 
-deploy:
-   image: python:3.8.12
-   stage: deploy_unienv
-   script:
-     # Скрипт сборки указан внутри системы и
-     # никаких дополнительных настроек не требуется
-     - echo
-   tags:
-     - a.uenv.ru
-     - unienv_deploy
-   environment:
-     name: UniEnv
-     url: http://a.uenv.ru
-   only:
-     variables:
-       - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+# deploy:
+#    image: python:3.8.12
+#    stage: deploy_unienv
+#    script:
+#      # Скрипт сборки указан внутри системы и
+#      # никаких дополнительных настроек не требуется
+#      - echo
+#    tags:
+#      - a.uenv.ru
+#      - unienv_deploy
+#    environment:
+#      name: UniEnv
+#      url: http://a.uenv.ru
+#    only:
+#      variables:
+#        - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
 
 
 build:
