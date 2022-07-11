@@ -39,6 +39,6 @@ class TestWhoAmI(InitUsers):
         response = self.anonymous_user.get(url)
 
         response_result = response.json()
-        await_result = {'error': 'login to view info'}
+        await_result = {'error': 'Войдите в аккаунт, чтобы увидеть информацию'}
 
         assert response_result == await_result
