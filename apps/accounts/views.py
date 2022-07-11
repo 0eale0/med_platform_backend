@@ -59,7 +59,7 @@ class SendEmailResetPasswordView(APIView):
         patient.password_reset_token = password_reset_token
         patient.save()
 
-        domain = request.build_absolute_uri('/')[:-1].strip("/")
+        domain = f"{request.scheme}://{request.META['HTTP_HOST']}"
 
         send_reset_password_email(domain, user.email, password_reset_token)
 
@@ -145,7 +145,7 @@ class ActivateUserView(APIView):
                 )
                 user.refresh_from_db()
 
-                domain = request.build_absolute_uri('/')[:-1].strip("/")
+                domain = f"{request.scheme}://{request.META['HTTP_HOST']}"
                 send_activate_user_email(domain, user.email, user.patient.user_activate_token)
                 return Response({"status": "ok"})
             except IntegrityError:
