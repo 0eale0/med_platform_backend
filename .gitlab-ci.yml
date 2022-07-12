@@ -5,6 +5,7 @@ services:
 
 stages:
   - lint
+  - tests
   # - deploy_unienv
   - build
   - deploy_yandex
