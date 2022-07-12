@@ -5,7 +5,6 @@ services:
 
 stages:
   - lint
-  - tests
   # - deploy_unienv
   - build
   - deploy_yandex
@@ -17,19 +16,6 @@ lint:
     - pip install click==8.0.1
     - pip install black==21.7b0
     - black . --check --diff
-
-run_tests:
-  stage: tests
-  image: atnartur/docker:latest
-  script:
-    - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} build
-    - >
-      docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA}
-      run app /bin/bash -c "python manage.py migrate && pytest --cov=."
-  after_script:
-      - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} down -v
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-
 
 build:
   stage: build
