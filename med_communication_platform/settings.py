@@ -32,7 +32,14 @@ SECRET_KEY = "django-insecure-u^2=^ousriw$1b#hclr78c8gnvcj!edb!^dmh0hlb1zu()d@dw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "api-med-platform.a.uenv.ru", '172.18.0.1', 'localhost', '84.252.137.193']
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "api-med-platform.a.uenv.ru",
+    '172.18.0.1',
+    'localhost',
+    '84.252.137.193',
+    'med.ya.uenv.ru',
+]
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
@@ -42,6 +49,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://172.18.0.1:5000",
     "http://localhost:3000",
     "http://84.252.137.193:8000",
+    "http://med.ya.uenv.ru",
 ]
 # Application definition
 

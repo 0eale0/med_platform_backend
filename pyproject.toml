@@ -28,7 +28,6 @@ pytest-mock = "^3.7.0"
 factory-boy = "^3.2.1"
 django-simple-history = "^3.0.0"
 django-filter = "^21.1"
-black = "^22.6.0"
 
 [tool.poetry.dev-dependencies]
 
