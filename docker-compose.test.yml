@@ -23,7 +23,6 @@ services:
       EMAIL_PORT: 587
       SERVER_EMAIL: test@gmail.com
       DEFAULT_FROM_EMAIL: test@gmail.com
-    restart: always
 
   db:
     image: postgres:12-alpine
@@ -33,7 +32,7 @@ services:
       POSTGRES_PASSWORD: test
     volumes:
       - db:/var/lib/postgresql/data
-    restart: always
+
 
   redis:
     image: redis:6-alpine

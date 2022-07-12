@@ -17,23 +17,17 @@ lint:
     - pip install black==21.7b0
     - black . --check --diff
 
-
-# deploy:
-#    image: python:3.8.12
-#    stage: deploy_unienv
-#    script:
-#      # Скрипт сборки указан внутри системы и
-#      # никаких дополнительных настроек не требуется
-#      - echo
-#    tags:
-#      - a.uenv.ru
-#      - unienv_deploy
-#    environment:
-#      name: UniEnv
-#      url: http://a.uenv.ru
-#    only:
-#      variables:
-#        - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+run_tests:
+  stage: tests
+  image: atnartur/docker:latest
+  script:
+    - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} build
+    - >
+      docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA}
+      run app /bin/bash -c "python manage.py migrate && pytest --cov=."
+  after_script:
+      - docker-compose -f docker-compose.test.yml -p backend_testing_${CI_COMMIT_SHA} down -v
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
 
 
 build:

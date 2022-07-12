@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 COPY requirements.txt .
 RUN pip install -r requirements.txt && poetry config virtualenvs.create false
 
-WORKDIR /backend
+WORKDIR /app
 COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry install
