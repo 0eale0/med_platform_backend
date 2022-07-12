@@ -8,8 +8,26 @@ services:
     depends_on:
       - db
       - redis
-    env_file:
-      - .env
+    ports:
+      - "8000:8000"
+    environment:
+      DB_NAME: med_backend
+      DB_USER: postgres
+      DB_PASSWORD: 123
+      DB_HOST: db
+
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS}
+      EMAIL_PORT: ${EMAIL_PORT}
+      SERVER_EMAIL: ${SERVER_EMAIL}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL}
+
+
+
+      REDIS_URL: redis://172.17.0.2:6379/0
+
     networks:
       - backend
     restart: always
@@ -17,9 +35,9 @@ services:
   db:
     image: postgres:12-alpine
     environment:
-      POSTGRES_NAME: $DB_NAME
-      POSTGRES_PASSWORD: $DB_PASSWORD
-      POSTGRES_USER: $DB_USER
+      POSTGRES_DB: med_backend
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: postgres
     networks:
       - backend
     volumes:
@@ -33,16 +51,16 @@ services:
     restart: always
     networks:
       - backend
-    env_file:
-      - .env
+    environment:
+      REDIS_URL: redis://172.17.0.2:6379/0
     expose:
       - 6379
 
   celery:
     build:
       context: .
-    env_file:
-      - .env
+    environment:
+      REDIS_URL: redis://172.17.0.2:6379/0
     networks:
       - backend
     depends_on:

@@ -19,17 +19,17 @@ class BaseForPatientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Patient
-        exclude = ["link_token"]
+        exclude = ["user_activate_token"]
 
     @staticmethod
     def get_join_link(obj):
-        return f"{obj.link_token}"
+        return f"{obj.user_activate_token}"
 
 
 class ActivatePatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        exclude = ["link_token", "doctor", "menu"]
+        exclude = ["user_activate_token", "doctor", "menu"]
 
 
 class ActivateUserSerializer(serializers.ModelSerializer):
@@ -39,6 +39,12 @@ class ActivateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = ["user", "patient"]
+
+
+class SendEmailResetPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email"]
 
 
 class DoctorSerializer(serializers.ModelSerializer):
@@ -53,3 +59,10 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ['user', 'post', 'contact_details']
+
+
+class ResetPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["password"]
+        write_only_fields = ["password"]

@@ -1,12 +1,16 @@
-image: python:3.9
+image: atnartur/docker:latest
+
+services:
+- docker:dind
 
 stages:
   - lint
-  - tests
+  # - deploy_unienv
   - build
-  - deploy
+  - deploy_yandex
 
 lint:
+  image: python:3.8.12
   stage: lint
   script:
     - pip install click==8.0.1
@@ -29,14 +33,15 @@ run_tests:
 build:
   stage: build
   script:
+    - echo $ENV_FILE_FOR_PROD
     - docker-compose -f docker-compose.prod.yml build
   tags:
     - med_platform
   only:
-    - feature/docker
+    - develop
 
 deploy_linux:
-  stage: deploy
+  stage: deploy_yandex
   script:
     - docker-compose -f docker-compose.prod.yml stop
     - docker-compose -f docker-compose.prod.yml rm -f
@@ -44,20 +49,4 @@ deploy_linux:
   tags:
     - med_platform
   only:
-    - feature/docker
-
-# deploy:
-#   stage: deploy
-#   script:
-#     # Скрипт сборки указан внутри системы и
-#     # никаких дополнительных настроек не требуется
-#     - echo
-#   tags:
-#     - a.uenv.ru
-#     - unienv_deploy
-#   environment:
-#     name: UniEnv
-#     url: http://a.uenv.ru
-#   only:
-#     variables:
-#       - $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+    - develop

@@ -42,3 +42,57 @@ class TestWhoAmI(InitUsers):
         await_result = {'error': 'Войдите в аккаунт, чтобы увидеть информацию'}
 
         assert response_result == await_result
+
+
+class TestActivateUser(InitUsers):
+    def test_user_activate(self):
+        token = "token"
+
+        patient = self.patient1
+        patient.user_activate_token = token
+        patient.user.is_active = False
+        patient.user.save()
+        patient.save()
+
+        url = f'/api/accounts/activate/?token={token}'
+        data = {"user": {"email": patient.user.email, "password": "123"}, "patient": {}}
+
+        response = self.anonymous_user.post(url, data=data, format="json")
+        assert response.status_code == 200
+
+        patient.refresh_from_db()
+        new_token = patient.user_activate_token
+
+        url = f"/api/accounts/VerifyEmail/{new_token}/"
+
+        response = self.anonymous_user.get(url)
+        assert response.status_code == 200
+
+        patient.refresh_from_db()
+
+        assert patient.user.is_active == True
+
+
+class TestResetPassword(InitUsers):
+    def test_reset_password(self):
+        patient = self.patient1
+        start_password = patient.user.password
+
+        url = f'/api/accounts/SendEmailResetPassword/'
+        data = {"email": patient.user.email}
+        response = self.anonymous_user.post(url, data=data, format="json")
+        assert response.status_code == 200
+
+        patient.refresh_from_db()
+        password_reset_token = patient.password_reset_token
+
+        url = f'/api/accounts/ResetPassword/{password_reset_token}/'
+        data = {"password": "super_hard_password"}
+
+        response = self.anonymous_user.post(url, data=data, format="json")
+        assert response.status_code == 200
+
+        patient.refresh_from_db()
+        end_password = patient.user.password
+
+        assert start_password != end_password
